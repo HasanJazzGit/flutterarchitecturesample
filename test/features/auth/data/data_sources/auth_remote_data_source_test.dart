@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:fluttersampleachitecture/core/network/api_client.dart';
+import 'package:fluttersampleachitecture/core/network/app_urls.dart';
 import 'package:fluttersampleachitecture/features/auth/data/data_sources/auth_remote_data_source_impl.dart';
 import 'package:fluttersampleachitecture/features/auth/data/models/login_response.dart';
 
@@ -41,7 +42,7 @@ void main() {
         // arrange
         when(
           mockApiClient.post(
-            '/login',
+            AppUrls.login,
             body: {'email': tEmail, 'password': tPassword},
           ),
         ).thenAnswer((_) async => tLoginResponseJson);
@@ -60,7 +61,7 @@ void main() {
         // Verify that the API client was called with correct parameters
         verify(
           mockApiClient.post(
-            '/login',
+            AppUrls.login,
             body: {'email': tEmail, 'password': tPassword},
           ),
         ).called(1);
@@ -77,7 +78,7 @@ void main() {
         };
         when(
           mockApiClient.post(
-            '/login',
+            AppUrls.login,
             body: {'email': tEmail, 'password': tPassword},
           ),
         ).thenAnswer((_) async => minimalResponseJson);
@@ -99,7 +100,7 @@ void main() {
       // arrange
       when(
         mockApiClient.post(
-          '/login',
+          AppUrls.login,
           body: {'email': tEmail, 'password': tPassword},
         ),
       ).thenThrow(
@@ -123,7 +124,7 @@ void main() {
         // arrange
         when(
           mockApiClient.post(
-            '/login',
+            AppUrls.login,
             body: {'email': tEmail, 'password': tPassword},
           ),
         ).thenThrow(Exception('Connection timeout'));
@@ -151,7 +152,7 @@ void main() {
       };
       when(
         mockApiClient.post(
-          '/login',
+          AppUrls.login,
           body: {'email': tEmail, 'password': tPassword},
         ),
       ).thenAnswer((_) async => snakeCaseResponseJson);
@@ -182,7 +183,7 @@ void main() {
 
         // assert
         expect(result, completes);
-        verify(mockApiClient.post('/logout')).called(1);
+        verify(mockApiClient.post(AppUrls.logout)).called(1);
       },
     );
 

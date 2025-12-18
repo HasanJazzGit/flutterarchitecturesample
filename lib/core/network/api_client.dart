@@ -139,23 +139,40 @@ class ApiClient {
   Map<String, dynamic> _handleResponse(
     Response<Map<String, dynamic>> response,
   ) {
-    if (response.statusCode != null &&
-        response.statusCode! >= 200 &&
-        response.statusCode! < 300) {
-      if (response.data == null || response.data!.isEmpty) {
+    final statusCode = response.statusCode ?? 0;
+    final responseData = response.data;
+
+    // Handle successful status codes (200, 201)
+    if (statusCode == 200 || statusCode == 201) {
+      if (responseData == null || responseData.isEmpty) {
         return {};
       }
-      return response.data!;
-    } else {
-      final statusCode = response.statusCode ?? 0;
-      final errorData = response.data;
-      final errorMap = errorData is Map<String, dynamic> ? errorData : null;
-      throw ApiException(
-        message: errorMap?['message'] as String? ?? 'Request failed',
-        statusCode: statusCode,
-        data: errorMap,
-      );
+
+      // Check for success field in response
+      if (responseData.containsKey('success')) {
+        final success = responseData['success'];
+        if (success == false) {
+          // API returned success: false, extract message
+          final message =
+              responseData['message'] as String? ?? 'Request failed';
+          throw ApiException(
+            message: message,
+            statusCode: statusCode,
+            data: responseData,
+          );
+        }
+      }
+
+      return responseData;
     }
+
+    // Handle other status codes
+    final errorMap = responseData;
+    throw ApiException(
+      message: errorMap?['message'] as String? ?? 'Request failed',
+      statusCode: statusCode,
+      data: errorMap,
+    );
   }
 
   void setAuthToken(String token) {

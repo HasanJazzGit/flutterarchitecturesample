@@ -1,0 +1,75 @@
+{
+  "@@locale": "en",
+  "appTitle": "Flutter Sample Architecture",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard page title"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings page title"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme settings"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language settings"
+  },
+  "lightTheme": "Light",
+  "@lightTheme": {
+    "description": "Light theme option"
+  },
+  "darkTheme": "Dark",
+  "@darkTheme": {
+    "description": "Dark theme option"
+  },
+  "systemTheme": "System",
+  "@systemTheme": {
+    "description": "System theme option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "urdu": "Urdu",
+  "@urdu": {
+    "description": "Urdu language option"
+  },
+  "selectTheme": "Select Theme",
+  "@selectTheme": {
+    "description": "Select theme dialog title"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Select language dialog title"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home page title"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page title"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  },
+  "changeTheme": "Change Theme",
+  "@changeTheme": {
+    "description": "Change theme button text"
+  },
+  "changeLanguage": "Change Language",
+  "@changeLanguage": {
+    "description": "Change language button text"
+  }
+}

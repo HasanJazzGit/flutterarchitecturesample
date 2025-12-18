@@ -1,0 +1,19 @@
+import 'package:equatable/equatable.dart';
+import 'product_entity.dart';
+
+class ProductsResult extends Equatable {
+  final List<ProductEntity> products;
+  final int total;
+  final int skip;
+  final int limit;
+
+  const ProductsResult({
+    required this.products,
+    required this.total,
+    required this.skip,
+    required this.limit,
+  });
+
+  @override
+  List<Object?> get props => [products, total, skip, limit];
+}

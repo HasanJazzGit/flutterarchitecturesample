@@ -1,0 +1,21 @@
+{
+  "@@locale": "ur",
+  "appTitle": "فلیٹر نمونہ آرکیٹیکچر",
+  "dashboard": "ڈیش بورڈ",
+  "settings": "ترتیبات",
+  "theme": "تھیم",
+  "language": "زبان",
+  "lightTheme": "روشنی",
+  "darkTheme": "اندھیرا",
+  "systemTheme": "سسٹم",
+  "english": "انگریزی",
+  "urdu": "اردو",
+  "selectTheme": "تھیم منتخب کریں",
+  "selectLanguage": "زبان منتخب کریں",
+  "home": "ہوم",
+  "profile": "پروفائل",
+  "logout": "لاگ آؤٹ",
+  "welcome": "خوش آمدید",
+  "changeTheme": "تھیم تبدیل کریں",
+  "changeLanguage": "زبان تبدیل کریں"
+}

@@ -1,6 +1,5 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_client.dart';
-import '../../core/network/api_config.dart';
 import 'data/data_sources/auth_remote_data_source.dart';
 import 'data/data_sources/auth_remote_data_source_impl.dart';
 import 'data/repositories/auth_repository_impl.dart';
@@ -13,13 +12,6 @@ import 'presentation/manager/auth_cubit.dart';
 
 /// Initialize authentication feature dependencies
 void initAuthInjector() {
-  // Register API Client (if not already registered)
-  if (!sl.isRegistered<ApiClient>()) {
-    sl.registerLazySingleton<ApiClient>(
-      () => ApiClient(baseUrl: ApiConfig.getBaseUrl()),
-    );
-  }
-
   // Register Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl<ApiClient>()),
