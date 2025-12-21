@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dependency Injection Template</title>
+<style>
+body {
+font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+margin: 40px;
+line-height: 1.6;
+color: #333;
+background-color: #fafafa;
+}
+h1, h2, h3 {
+color: #2c3e50;
+}
+pre {
+background: #f4f4f4;
+padding: 15px;
+border-radius: 6px;
+overflow-x: auto;
+border: 1px solid #ddd;
+}
+code {
+background-color: #f0f0f0;
+padding: 2px 5px;
+border-radius: 3px;
+font-size: 0.95em;
+color: #c7254e;
+}
+    .note {
+background-color: #eaf7ff;
+padding: 10px 15px;
+border-left: 4px solid #007acc;
+border-radius: 5px;
+margin: 20px 0;
+}
+ul, ol {
+margin-left: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>Dependency Injection Template</h1>
+
+<h2>How to Add a New Feature to DI</h2>
+
+<h3>Step 1: Create Feature Injection File</h3>
+
+<p>
+Create <code>lib/features/[feature_name]/[feature_name]_injection.dart</code>:
+</p>
+
+<pre><code class="language-dart">
+import '../../core/di/dependency_injection.dart';
+import '../../core/network/api_client.dart';
+import 'data/data_sources/[feature]_remote_data_source.dart';
+import 'data/data_sources/[feature]_remote_data_source_impl.dart';
+import 'data/repositories/[feature]_repository_impl.dart';
+import 'domain/repositories/[feature]_repository.dart';
+import 'domain/use_cases/[use_case_1].dart';
+import 'domain/use_cases/[use_case_2].dart';
+import 'presentation/cubit/[feature]_cubit.dart';
+
+/// Initialize [Feature] feature dependencies
+void init[Feature]Injector() {
+// Register Data Sources (if needed)
+sl.registerLazySingleton&lt;[Feature]RemoteDataSource&gt;(
+() =&gt; [Feature]RemoteDataSourceImpl(sl&lt;ApiClient&gt;()),
+);
+
+// Register Repositories
+sl.registerLazySingleton&lt;[Feature]Repository&gt;(
+() =&gt; [Feature]RepositoryImpl(sl&lt;[Feature]RemoteDataSource&gt;()),
+);
+
+// Register Use Cases
+sl.registerLazySingleton&lt;[UseCase1]&gt;(
+() =&gt; [UseCase1](repository: sl&lt;[Feature]Repository&gt;()),
+);
+
+sl.registerLazySingleton&lt;[UseCase2]&gt;(
+() =&gt; [UseCase2](repository: sl&lt;[Feature]Repository&gt;()),
+);
+
+// Register Cubits (Factory - creates new instance each time)
+sl.registerFactory&lt;[Feature]Cubit&gt;(
+() =&gt; [Feature]Cubit(
+useCase1: sl&lt;[UseCase1]&gt;(),
+useCase2: sl&lt;[UseCase2]&gt;(),
+),
+);
+}
+</code></pre>
+
+<h3>Step 2: Register in Main DI File</h3>
+
+<p>Add to <code>lib/core/di/dependency_injection.dart</code>:</p>
+
+<pre><code class="language-dart">
+import '../../features/[feature_name]/[feature_name]_injection.dart';
+
+Future&lt;void&gt; initDependencyInjection() async {
+await _initCore();
+
+initAuthInjector();
+init[Feature]Injector(); // Add this line
+// Add more features here
+}
+</code></pre>
+
+<h3>Step 3: Use in UI</h3>
+
+<pre><code class="language-dart">
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/di/dependency_injection.dart';
+import '../cubit/[feature]_cubit.dart';
+
+BlocProvider(
+create: (context) =&gt; sl&lt;[Feature]Cubit&gt;(),
+child: YourWidget(),
+)
+</code></pre>
+
+<h2>Registration Types</h2>
+
+<ul>
+<li>
+<strong>registerLazySingleton</strong>: Creates instance only when first accessed, then reuses it
+<br><em>Use for:</em> Repositories, Data Sources, Use Cases, Services
+</li>
+<li>
+<strong>registerFactory</strong>: Creates new instance every time it's accessed
+<br><em>Use for:</em> Cubits, BLoCs (stateful widgets need fresh instances)
+</li>
+<li>
+<strong>registerSingleton</strong>: Creates instance immediately at registration
+<br><em>Use for:</em> Services that need immediate initialization
+</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<ol>
+<li>Register dependencies in order: <strong>Data Sources → Repositories → Use Cases → Cubits</strong></li>
+<li>Use <code>sl&lt;T&gt;()</code> to resolve dependencies</li>
+<li>Check if already registered: <code>if (!sl.isRegistered&lt;T&gt;())</code></li>
+<li>Keep feature injection files separate for better organization</li>
+<li>Use factories for Cubits to ensure fresh instances per widget</li>
+</ol>
+
+<div class="note">
+💡 <strong>Tip:</strong> Keep your DI registrations modular — each feature should manage its own injection file for easy maintenance and scalability.
+</div>
+
+</body>
+</html>

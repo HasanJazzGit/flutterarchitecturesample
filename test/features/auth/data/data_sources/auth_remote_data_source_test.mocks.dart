@@ -65,6 +65,11 @@ class MockApiClient extends _i1.Mock implements _i3.ApiClient {
           as Map<String, String>);
 
   @override
+  bool get enableLogging =>
+      (super.noSuchMethod(Invocation.getter(#enableLogging), returnValue: false)
+          as bool);
+
+  @override
   _i5.Future<Map<String, dynamic>> get(
     String? endpoint, {
     Map<String, String>? headers,
@@ -153,6 +158,12 @@ class MockApiClient extends _i1.Mock implements _i3.ApiClient {
   @override
   void removeAuthToken() => super.noSuchMethod(
     Invocation.method(#removeAuthToken, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void refreshAuthToken() => super.noSuchMethod(
+    Invocation.method(#refreshAuthToken, []),
     returnValueForMissingStub: null,
   );
 

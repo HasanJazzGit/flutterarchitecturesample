@@ -1,14 +1,12 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_client.dart';
+import '../../core/storage/app_pref.dart';
 import 'data/data_sources/auth_remote_data_source.dart';
 import 'data/data_sources/auth_remote_data_source_impl.dart';
 import 'data/repositories/auth_repository_impl.dart';
 import 'domain/repositories/auth_repository.dart';
-import 'domain/use_cases/is_authenticated_use_case.dart';
 import 'domain/use_cases/login_use_case.dart';
-import 'domain/use_cases/logout_use_case.dart';
-import 'domain/use_cases/verify_otp_use_case.dart';
-import 'presentation/manager/auth_cubit.dart';
+import 'presentation/cubit/auth_cubit.dart';
 
 /// Initialize authentication feature dependencies
 void initAuthInjector() {
@@ -19,7 +17,8 @@ void initAuthInjector() {
 
   // Register Repositories
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(sl<AuthRemoteDataSource>()),
+    () =>
+        AuthRepositoryImpl(sl<AuthRemoteDataSource>(), appPref: sl<AppPref>()),
   );
 
   // Register Use Cases
@@ -27,18 +26,8 @@ void initAuthInjector() {
     () => LoginUseCase(authRepository: sl<AuthRepository>()),
   );
 
-  sl.registerLazySingleton<LogoutUseCase>(
-    () => LogoutUseCase(authRepository: sl<AuthRepository>()),
-  );
-
-  sl.registerLazySingleton<IsAuthenticatedUseCase>(
-    () => IsAuthenticatedUseCase(authRepository: sl<AuthRepository>()),
-  );
-
-  sl.registerLazySingleton<VerifyOtpUseCase>(
-    () => VerifyOtpUseCase(authRepository: sl<AuthRepository>()),
-  );
-
-  // Register Cubits (Factory - creates new instance each time)
-  sl.registerFactory<AuthCubit>(() => AuthCubit(sl<LoginUseCase>()));
+  // Register Cubits
+  // Lazy Singleton: Same instance shared across all auth screens (login, OTP, password recovery, logout)
+  // This ensures state persists between navigation (e.g., email from login available in OTP screen)
+  sl.registerLazySingleton<AuthCubit>(() => AuthCubit(sl<LoginUseCase>()));
 }

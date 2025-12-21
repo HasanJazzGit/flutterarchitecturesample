@@ -35,6 +35,7 @@ class AppStrings {
   static const String register = 'Register';
   static const String signUp = 'Sign Up';
   static const String signIn = 'Sign In';
+  static const String welcomeBack = 'Welcome Back';
   static const String email = 'Email';
   static const String password = 'Password';
   static const String confirmPassword = 'Confirm Password';
@@ -49,7 +50,8 @@ class AppStrings {
   static const String enterEmail = 'Enter your email';
   static const String enterPassword = 'Enter your password';
   static const String enterValidEmail = 'Please enter a valid email';
-  static const String passwordTooShort = 'Password must be at least 8 characters';
+  static const String passwordTooShort =
+      'Password must be at least 8 characters';
   static const String passwordsDoNotMatch = 'Passwords do not match';
 
   // OTP
@@ -64,7 +66,8 @@ class AppStrings {
   // Errors
   static const String error = 'Error';
   static const String somethingWentWrong = 'Something went wrong';
-  static const String networkError = 'Network error. Please check your connection';
+  static const String networkError =
+      'Network error. Please check your connection';
   static const String serverError = 'Server error. Please try again later';
   static const String unknownError = 'An unknown error occurred';
   static const String noInternetConnection = 'No internet connection';
@@ -117,4 +120,3 @@ class AppStrings {
   static const String termsOfService = 'Terms of Service';
   static const String privacyPolicy = 'Privacy Policy';
 }
-

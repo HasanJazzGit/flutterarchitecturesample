@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../manager/products_cubit.dart';
-import '../manager/products_state.dart';
+import '../../../../core/widgets/app_shimmer.dart';
+import '../cubit/products_cubit.dart';
+import '../cubit/products_state.dart';
 import 'product_card.dart';
 
 class ProductsList extends StatelessWidget {
@@ -11,8 +12,9 @@ class ProductsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProductsCubit, ProductsState>(
       builder: (context, state) {
-        if (state.isLoading && state.products.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+
+        if (state.isLoading ) {
+       return AppShimmerGrid();
         }
 
         if (state.errorMessage != null && state.products.isEmpty) {

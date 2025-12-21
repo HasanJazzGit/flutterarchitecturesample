@@ -1,4 +1,4 @@
-import '../config/app_config.dart';
+import '../flavor/app_config.dart';
 
 class AppConstants {
   // App Info - Get from AppConfig based on flavor
@@ -33,4 +33,3 @@ class AppConstants {
   // Debounce
   static const Duration debounceDelay = Duration(milliseconds: 500);
 }
-

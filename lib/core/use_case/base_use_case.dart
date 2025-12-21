@@ -8,6 +8,7 @@ abstract class UseCase<T, Params> {
   Future<Either<ErrorMsg, T>> call(Params params);
 }
 
+
 /// Use case with no parameters
 abstract class UseCaseNoParams<T> {
   Future<Either<ErrorMsg, T>> call();

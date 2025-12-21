@@ -1,3 +1,5 @@
+import 'package:fluttersampleachitecture/features/products/domain/use_cases/get_products_use_case.dart';
+
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/app_urls.dart';
 import '../models/product_model.dart';
@@ -10,11 +12,11 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   ProductRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<ProductsResponse> getProducts({int? skip, int? limit}) async {
+  Future<ProductsResponse> getProducts({required GetProductsParams params}) async {
     try {
       final queryParams = <String, dynamic>{};
-      if (skip != null) queryParams['skip'] = skip;
-      if (limit != null) queryParams['limit'] = limit;
+      if (params.skip != null) queryParams['skip'] = params.skip;
+      if (params.limit != null) queryParams['limit'] = params.limit;
 
       final response = await apiClient.get(
         AppUrls.products,
@@ -29,41 +31,4 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     }
   }
 
-  @override
-  Future<ProductModel> getProductById(int id) async {
-    try {
-      final response = await apiClient.get(AppUrls.productById(id));
-      return ProductModel.fromJson(response);
-    } on ApiException catch (e) {
-      throw Exception(e.message);
-    } catch (e) {
-      throw Exception('Failed to fetch product: ${e.toString()}');
-    }
-  }
-
-  @override
-  Future<ProductsResponse> getProductsByCategory(String category) async {
-    try {
-      final response = await apiClient.get(
-        AppUrls.productsByCategory(category),
-      );
-      return ProductsResponse.fromJson(response);
-    } on ApiException catch (e) {
-      throw Exception(e.message);
-    } catch (e) {
-      throw Exception('Failed to fetch products by category: ${e.toString()}');
-    }
-  }
-
-  @override
-  Future<ProductsResponse> searchProducts(String query) async {
-    try {
-      final response = await apiClient.get(AppUrls.searchProducts(query));
-      return ProductsResponse.fromJson(response);
-    } on ApiException catch (e) {
-      throw Exception(e.message);
-    } catch (e) {
-      throw Exception('Failed to search products: ${e.toString()}');
-    }
-  }
 }

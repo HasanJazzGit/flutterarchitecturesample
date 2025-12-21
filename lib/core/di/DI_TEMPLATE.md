@@ -15,7 +15,7 @@ import 'data/repositories/[feature]_repository_impl.dart';
 import 'domain/repositories/[feature]_repository.dart';
 import 'domain/use_cases/[use_case_1].dart';
 import 'domain/use_cases/[use_case_2].dart';
-import 'presentation/manager/[feature]_cubit.dart';
+import 'presentation/cubit/[feature]_cubit.dart';
 
 /// Initialize [Feature] feature dependencies
 void init[Feature]Injector() {
@@ -69,7 +69,7 @@ Future<void> initDependencyInjection() async {
 ```dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/dependency_injection.dart';
-import '../manager/[feature]_cubit.dart';
+import '../cubit/[feature]_cubit.dart';
 
 BlocProvider(
   create: (context) => sl<[Feature]Cubit>(),

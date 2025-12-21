@@ -1,7 +1,7 @@
 /// App enums for state management
 library app_enums;
 
-/// App lifecycle state enum
+/// App lifecycle state enums
 /// Represents the current state of the application
 enum AppState {
   /// App is initializing (e.g., loading initial data, setting up services)

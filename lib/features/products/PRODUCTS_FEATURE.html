@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Feature - Complete Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        pre code {
+            background-color: transparent;
+            color: #ecf0f1;
+            padding: 0;
+        }
+        .checkmark {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .warning {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .toc {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            text-decoration: none;
+            color: #3498db;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .architecture-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .tip {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Products Feature - Complete Guide</h1>
+
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#overview">1. Overview</a></li>
+            <li><a href="#architecture">2. Architecture</a></li>
+            <li><a href="#file-structure">3. File Structure</a></li>
+            <li><a href="#component-details">4. Component Details</a></li>
+            <li><a href="#data-flow">5. Data Flow</a></li>
+            <li><a href="#state-management">6. State Management</a></li>
+            <li><a href="#offline-support">7. Offline Support</a></li>
+            <li><a href="#ui-components">8. UI Components</a></li>
+            <li><a href="#usage-examples">9. Usage Examples</a></li>
+            <li><a href="#adding-new-features">10. Adding New Features</a></li>
+            <li><a href="#best-practices">11. Best Practices</a></li>
+        </ul>
+    </div>
+
+    <h2 id="overview">Overview</h2>
+    <p>The Products feature implements a complete product listing system following <strong>Clean Architecture</strong> principles with <strong>offline-first</strong> support. It demonstrates:</p>
+    <ul class="feature-list">
+        <li>Clean Architecture (Domain, Data, Presentation layers)</li>
+        <li>Repository Pattern (Abstract interface + Implementation)</li>
+        <li>Use Case Pattern (Business logic encapsulation)</li>
+        <li>State Management (Cubit/Bloc pattern)</li>
+        <li>Dependency Injection (GetIt service locator)</li>
+        <li>Error Handling (Either/Left/Right pattern)</li>
+        <li>Offline-First Strategy (Drift database with connectivity checks)</li>
+        <li>Pagination (Infinite scroll with skip/limit)</li>
+        <li>Pull-to-Refresh (Manual data refresh)</li>
+    </ul>
+
+    <h3>Features Implemented</h3>
+    <ul class="feature-list">
+        <li>Product listing with pagination</li>
+        <li>Infinite scroll loading</li>
+        <li>Pull-to-refresh functionality</li>
+        <li>Offline support with local database</li>
+        <li>Automatic data synchronization</li>
+        <li>Loading shimmer effects</li>
+        <li>Error handling and retry mechanism</li>
+        <li>Product card display with images</li>
+        <li>Discount price calculation</li>
+    </ul>
+
+    <h2 id="architecture">Architecture</h2>
+    <h3>Clean Architecture Layers</h3>
+    <div class="architecture-box">
+        <pre>
+┌─────────────────────────────────────────┐
+│         PRESENTATION LAYER              │
+│  (UI, Widgets, State Management)        │
+│  - ProductsPage                         │
+│  - ProductsCubit (State Management)   │
+│  - ProductsState                        │
+│  - ProductsList Widget                  │
+│  - ProductCard Widget                   │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│           DOMAIN LAYER                   │
+│  (Business Logic, Entities)             │
+│  - ProductEntity                        │
+│  - ProductListEntity                    │
+│  - ProductRepository (Interface)       │
+│  - GetProductsUseCase                   │
+│  - GetProductsParams                    │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│            DATA LAYER                    │
+│  (API, Storage, Models)                 │
+│  - ProductRepositoryImpl                │
+│  - ProductRemoteDataSource (Interface) │
+│  - ProductRemoteDataSourceImpl          │
+│  - ProductLocalDataSource (Interface)  │
+│  - ProductLocalDataSourceImpl           │
+│  - ProductModel                         │
+│  - ProductsResponse                      │
+│  - ProductMapper                        │
+│  - AppDatabase (Drift)                  │
+└─────────────────────────────────────────┘
+        </pre>
+    </div>
+
+    <h3>Dependency Flow</h3>
+    <div class="architecture-box">
+        <pre>
+UI (ProductsPage)
+    ↓
+ProductsCubit (State Management)
+    ↓
+GetProductsUseCase (Business Logic)
+    ↓
+ProductRepository (Interface)
+    ↓
+ProductRepositoryImpl (Implementation)
+    ↓
+    ├─→ ConnectivityService (Check Internet)
+    │
+    ├─→ [Has Internet]
+    │   ├─→ ProductRemoteDataSource (API)
+    │   └─→ ProductLocalDataSource (Save to DB)
+    │
+    └─→ [No Internet]
+        └─→ ProductLocalDataSource (Get from DB)
+        </pre>
+    </div>
+
+    <h2 id="file-structure">File Structure</h2>
+    <pre><code>lib/features/products/
+├── data/
+│   ├── data_sources/
+│   │   ├── product_remote_data_source.dart          # Abstract interface
+│   │   ├── product_remote_data_source_impl.dart      # API implementation
+│   │   ├── product_local_data_source.dart             # Abstract interface
+│   │   └── product_local_data_source_impl.dart        # Drift implementation
+│   ├── mappers/
+│   │   └── product_mapper.dart                        # Model ↔ Entity mapper
+│   ├── models/
+│   │   ├── product_model.dart                         # API response model
+│   │   └── products_response.dart                     # Paginated response model
+│   └── repositories/
+│       └── product_repository_impl.dart               # Repository implementation
+├── domain/
+│   ├── entities/
+│   │   ├── product_entity.dart                        # Single product entity
+│   │   └── product_list.dart                          # Paginated list entity
+│   ├── repositories/
+│   │   └── product_repository.dart                    # Repository interface
+│   └── use_cases/
+│       └── get_products_use_case.dart                 # Use case + Params
+├── presentation/
+│   ├── cubit/
+│   │   ├── products_cubit.dart                         # State management
+│   │   └── products_state.dart                         # State class
+│   ├── pages/
+│   │   └── products_page.dart                          # Main products page
+│   └── widgets/
+│       ├── products_list.dart                          # List widget
+│       └── product_card.dart                            # Card widget
+└── products_injection.dart                              # Dependency injection</code></pre>
+
+    <h2 id="component-details">Component Details</h2>
+    <h3>1. Domain Layer</h3>
+    <h4>ProductEntity</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/domain/entities/product_entity.dart</code></p>
+    <p>Represents a single product in the domain layer with all product information fields and a computed property for discounted price.</p>
+
+    <h4>ProductListEntity</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/domain/entities/product_list.dart</code></p>
+    <p>Represents a paginated list of products with metadata (total, skip, limit).</p>
+
+    <h4>ProductRepository (Interface)</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/domain/repositories/product_repository.dart</code></p>
+    <p>Abstract interface for product data operations, returns Either type for error handling.</p>
+
+    <h4>GetProductsUseCase</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/domain/use_cases/get_products_use_case.dart</code></p>
+    <p>Encapsulates business logic for fetching products, implements base UseCase interface, handles pagination parameters.</p>
+
+    <h3>2. Data Layer</h3>
+    <h4>ProductModel</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/data/models/product_model.dart</code></p>
+    <p>API response model that extends ProductEntity, includes JSON serialization/deserialization and conversion to entity.</p>
+
+    <h4>ProductRemoteDataSourceImpl</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/data/data_sources/product_remote_data_source_impl.dart</code></p>
+    <p>Concrete implementation using ApiClient for HTTP requests, handles query parameters for pagination, returns ProductsResponse model.</p>
+
+    <h4>ProductLocalDataSourceImpl</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/data/data_sources/product_local_data_source_impl.dart</code></p>
+    <p>Concrete implementation using Drift database for local storage, handles pagination with skip/limit, converts database rows to models, supports clearing data before saving.</p>
+
+    <h4>ProductRepositoryImpl</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/data/repositories/product_repository_impl.dart</code></p>
+    <p>Implements offline-first strategy:</p>
+    <ul>
+        <li>Checks connectivity first</li>
+        <li>Saves remote data to local database automatically</li>
+        <li>Uses local data as fallback if offline or API fails</li>
+        <li>Returns Either type for error handling</li>
+    </ul>
+
+    <h3>3. Presentation Layer</h3>
+    <h4>ProductsState</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/presentation/cubit/products_state.dart</code></p>
+    <p>State class tracking: products list, loading state, error messages, pagination state (skip, limit, hasMore), and total count.</p>
+
+    <h4>ProductsCubit</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/presentation/cubit/products_cubit.dart</code></p>
+    <p>State management for products with methods:</p>
+    <ul>
+        <li><code>loadProducts()</code>: Load products with pagination</li>
+        <li><code>refreshProducts()</code>: Refresh from beginning</li>
+        <li><code>loadMoreProducts()</code>: Load next page (infinite scroll)</li>
+    </ul>
+
+    <h4>ProductsPage</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/presentation/pages/products_page.dart</code></p>
+    <p>Main products page that provides ProductsCubit via BlocProvider and uses factory registration (new instance per page).</p>
+
+    <h4>ProductsList Widget</h4>
+    <p><strong>Location:</strong> <code>lib/features/products/presentation/widgets/products_list.dart</code></p>
+    <p>Displays product list with:</p>
+    <ul>
+        <li>Loading shimmer effect</li>
+        <li>Error handling with retry</li>
+        <li>Pull-to-refresh</li>
+        <li>Infinite scroll pagination</li>
+        <li>Grid layout</li>
+    </ul>
+
+    <h2 id="data-flow">Data Flow</h2>
+    <h3>1. Initial Load</h3>
+    <ol>
+        <li>ProductsPage builds</li>
+        <li>BlocProvider creates ProductsCubit</li>
+        <li>ProductsCubit constructor calls loadProducts()</li>
+        <li>loadProducts() emits loading state</li>
+        <li>Calls GetProductsUseCase with skip=0, limit=30</li>
+        <li>GetProductsUseCase calls ProductRepository.getProducts()</li>
+        <li>ProductRepository checks connectivity</li>
+        <li>If online: Fetch from API → Save to DB → Return entities</li>
+        <li>If offline: Fetch from DB → Return entities</li>
+        <li>ProductsCubit receives result and emits success state</li>
+        <li>ProductsList widget rebuilds with products</li>
+    </ol>
+
+    <h3>2. Pull-to-Refresh</h3>
+    <ol>
+        <li>User pulls down on ProductsList</li>
+        <li>RefreshIndicator triggers onRefresh</li>
+        <li>Calls ProductsCubit.refreshProducts()</li>
+        <li>refreshProducts() calls loadProducts(refresh: true)</li>
+        <li>loadProducts() resets skip to 0 and clears products</li>
+        <li>Fetches fresh data from API</li>
+        <li>Updates state with new products</li>
+    </ol>
+
+    <h3>3. Infinite Scroll (Load More)</h3>
+    <ol>
+        <li>User scrolls to bottom of list</li>
+        <li>GridView.builder reaches last item</li>
+        <li>Checks if hasMore is true</li>
+        <li>Calls ProductsCubit.loadMoreProducts()</li>
+        <li>loadMoreProducts() calls loadProducts() with current skip</li>
+        <li>Appends new products to existing list</li>
+        <li>Updates skip and hasMore state</li>
+    </ol>
+
+    <h3>4. Offline Flow</h3>
+    <ol>
+        <li>User opens app without internet</li>
+        <li>ProductsCubit.loadProducts() called</li>
+        <li>ProductRepository checks connectivity → false</li>
+        <li>Calls _getProductsFromLocal()</li>
+        <li>ProductLocalDataSource queries Drift database</li>
+        <li>Returns cached products</li>
+        <li>ProductsCubit emits success with local data</li>
+    </ol>
+
+    <h2 id="state-management">State Management</h2>
+    <h3>State Transitions</h3>
+    <div class="architecture-box">
+        <pre>
+Initial State
+    ↓
+Loading (isLoading: true, products: [])
+    ↓
+    ├─→ Success (isLoading: false, products: [...])
+    │       ↓
+    │   Load More (isLoading: true, products: [...])
+    │       ↓
+    │   Success (isLoading: false, products: [...more])
+    │
+    └─→ Error (isLoading: false, errorMessage: "...")
+            ↓
+        Retry → Loading
+        </pre>
+    </div>
+
+    <h3>State Properties</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>products</code></td>
+                <td><code>List&lt;ProductEntity&gt;</code></td>
+                <td>List of loaded products</td>
+            </tr>
+            <tr>
+                <td><code>isLoading</code></td>
+                <td><code>bool</code></td>
+                <td>Loading indicator state</td>
+            </tr>
+            <tr>
+                <td><code>errorMessage</code></td>
+                <td><code>String?</code></td>
+                <td>Error message if any</td>
+            </tr>
+            <tr>
+                <td><code>total</code></td>
+                <td><code>int</code></td>
+                <td>Total products available</td>
+            </tr>
+            <tr>
+                <td><code>skip</code></td>
+                <td><code>int</code></td>
+                <td>Current pagination offset</td>
+            </tr>
+            <tr>
+                <td><code>limit</code></td>
+                <td><code>int</code></td>
+                <td>Items per page (default: 30)</td>
+            </tr>
+            <tr>
+                <td><code>hasMore</code></td>
+                <td><code>bool</code></td>
+                <td>Whether more products available</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="offline-support">Offline Support</h2>
+    <h3>Architecture</h3>
+    <p>The products feature implements an <strong>offline-first</strong> strategy:</p>
+    <ol>
+        <li><strong>Connectivity Check</strong>: Uses <code>ConnectivityService</code> to check internet</li>
+        <li><strong>Remote First</strong>: If online, fetch from API</li>
+        <li><strong>Auto-Sync</strong>: Save API response to local database</li>
+        <li><strong>Fallback</strong>: If offline or API fails, use local database</li>
+        <li><strong>Seamless UX</strong>: User doesn't notice the difference</li>
+    </ol>
+
+    <h3>Database Schema</h3>
+    <p><strong>Table:</strong> <code>Products</code></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>id</code></td>
+                <td><code>int</code></td>
+                <td>Product ID (Primary Key)</td>
+            </tr>
+            <tr>
+                <td><code>title</code></td>
+                <td><code>text</code></td>
+                <td>Product title</td>
+            </tr>
+            <tr>
+                <td><code>description</code></td>
+                <td><code>text</code></td>
+                <td>Product description</td>
+            </tr>
+            <tr>
+                <td><code>category</code></td>
+                <td><code>text</code></td>
+                <td>Product category</td>
+            </tr>
+            <tr>
+                <td><code>price</code></td>
+                <td><code>real</code></td>
+                <td>Original price</td>
+            </tr>
+            <tr>
+                <td><code>discountPercentage</code></td>
+                <td><code>real</code></td>
+                <td>Discount percentage</td>
+            </tr>
+            <tr>
+                <td><code>rating</code></td>
+                <td><code>real</code></td>
+                <td>Product rating</td>
+            </tr>
+            <tr>
+                <td><code>stock</code></td>
+                <td><code>int</code></td>
+                <td>Available stock</td>
+            </tr>
+            <tr>
+                <td><code>tags</code></td>
+                <td><code>text</code></td>
+                <td>JSON array of tags</td>
+            </tr>
+            <tr>
+                <td><code>brand</code></td>
+                <td><code>text</code></td>
+                <td>Product brand (nullable)</td>
+            </tr>
+            <tr>
+                <td><code>sku</code></td>
+                <td><code>text</code></td>
+                <td>SKU code</td>
+            </tr>
+            <tr>
+                <td><code>thumbnail</code></td>
+                <td><code>text</code></td>
+                <td>Thumbnail image URL</td>
+            </tr>
+            <tr>
+                <td><code>images</code></td>
+                <td><code>text</code></td>
+                <td>JSON array of image URLs</td>
+            </tr>
+            <tr>
+                <td><code>createdAt</code></td>
+                <td><code>int</code></td>
+                <td>Timestamp (for sorting)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="ui-components">UI Components</h2>
+    <h3>ProductsPage</h3>
+    <ul>
+        <li><strong>AppBar</strong>: Title "Products"</li>
+        <li><strong>Body</strong>: ProductsList widget</li>
+        <li><strong>Provider</strong>: BlocProvider for ProductsCubit</li>
+    </ul>
+
+    <h3>ProductsList</h3>
+    <ul>
+        <li><strong>Loading</strong>: AppShimmerGrid (shimmer effect)</li>
+        <li><strong>Error</strong>: Error widget with retry button</li>
+        <li><strong>Empty</strong>: Empty state message</li>
+        <li><strong>Success</strong>: GridView with RefreshIndicator</li>
+    </ul>
+
+    <h3>ProductCard</h3>
+    <ul>
+        <li><strong>Image</strong>: Network image from thumbnail URL</li>
+        <li><strong>Title</strong>: Product title</li>
+        <li><strong>Price</strong>: Discounted price (computed)</li>
+        <li><strong>Rating</strong>: Star rating display</li>
+        <li><strong>Stock</strong>: Stock availability</li>
+    </ul>
+
+    <h2 id="usage-examples">Usage Examples</h2>
+    <h3>1. Navigate to Products Page</h3>
+    <pre><code>// From Examples page
+context.push(AppRoutes.path(AppRoutes.products));</code></pre>
+
+    <h3>2. Access ProductsCubit</h3>
+    <pre><code>// Read state
+final state = context.read&lt;ProductsCubit&gt;().state;
+
+// Call methods
+context.read&lt;ProductsCubit&gt;().refreshProducts();
+context.read&lt;ProductsCubit&gt;().loadMoreProducts();</code></pre>
+
+    <h3>3. Listen to State Changes</h3>
+    <pre><code>BlocBuilder&lt;ProductsCubit, ProductsState&gt;(
+  builder: (context, state) {
+    if (state.isLoading) return LoadingWidget();
+    if (state.errorMessage != null) return ErrorWidget();
+    return ProductsGrid(products: state.products);
+  },
+)</code></pre>
+
+    <h3>4. Use BlocSelector for Specific State</h3>
+    <pre><code>BlocSelector&lt;ProductsCubit, ProductsState, bool&gt;(
+  selector: (state) =&gt; state.isLoading,
+  builder: (context, isLoading) {
+    return isLoading ? CircularProgressIndicator() : SizedBox();
+  },
+)</code></pre>
+
+    <h2 id="adding-new-features">Adding New Features</h2>
+    <h3>Example: Add Product Search</h3>
+    <h4>1. Update Domain Layer</h4>
+    <p><strong>Add to <code>GetProductsParams</code>:</strong></p>
+    <pre><code>class GetProductsParams {
+  final int? skip;
+  final int? limit;
+  final String? searchQuery; // NEW
+}</code></pre>
+
+    <h4>2. Update Data Layer</h4>
+    <p><strong>Update <code>ProductRemoteDataSourceImpl</code>:</strong></p>
+    <pre><code>if (params.searchQuery != null) queryParams['q'] = params.searchQuery; // NEW
+final response = await apiClient.get('/products/search', queryParameters: queryParams);</code></pre>
+
+    <h4>3. Update Presentation Layer</h4>
+    <p><strong>Add to <code>ProductsState</code>:</strong></p>
+    <pre><code>final String? searchQuery; // NEW</code></pre>
+    <p><strong>Add to <code>ProductsCubit</code>:</strong></p>
+    <pre><code>Future&lt;void&gt; searchProducts(String query) async {
+  emit(state.copyWith(searchQuery: query, skip: 0, products: []));
+  await loadProducts(refresh: true);
+}</code></pre>
+
+    <h2 id="best-practices">Best Practices</h2>
+    <h3>1. Offline-First Strategy</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Always check connectivity before API calls</li>
+            <li>Save remote data to local database</li>
+            <li>Use local data as fallback</li>
+            <li>Show appropriate messages for offline state</li>
+        </ul>
+    </div>
+    <div class="warning-box">
+        <strong>❌ DON'T:</strong>
+        <ul>
+            <li>Block UI while checking connectivity</li>
+            <li>Show errors for offline mode (use local data)</li>
+            <li>Forget to sync data when online</li>
+        </ul>
+    </div>
+
+    <h3>2. Pagination</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Use skip/limit for pagination</li>
+            <li>Track hasMore to prevent unnecessary calls</li>
+            <li>Reset pagination on refresh</li>
+            <li>Show loading indicator for load more</li>
+        </ul>
+    </div>
+    <div class="warning-box">
+        <strong>❌ DON'T:</strong>
+        <ul>
+            <li>Load all data at once</li>
+            <li>Call API if hasMore is false</li>
+            <li>Forget to update skip after loading</li>
+        </ul>
+    </div>
+
+    <h3>3. State Management</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Use factory registration for Cubit (new instance per page)</li>
+            <li>Emit loading state before async operations</li>
+            <li>Handle errors gracefully</li>
+            <li>Reset state on refresh</li>
+        </ul>
+    </div>
+    <div class="warning-box">
+        <strong>❌ DON'T:</strong>
+        <ul>
+            <li>Use singleton for page-level Cubits</li>
+            <li>Forget to handle loading/error states</li>
+            <li>Emit state without mounted check (if needed)</li>
+        </ul>
+    </div>
+
+    <h3>4. Error Handling</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Use Either type for error handling</li>
+            <li>Show user-friendly error messages</li>
+            <li>Provide retry mechanism</li>
+            <li>Log errors for debugging</li>
+        </ul>
+    </div>
+    <div class="warning-box">
+        <strong>❌ DON'T:</strong>
+        <ul>
+            <li>Show technical error messages to users</li>
+            <li>Ignore errors silently</li>
+            <li>Forget to reset error state</li>
+        </ul>
+    </div>
+
+    <h3>5. Performance</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Use pagination to limit data</li>
+            <li>Cache images properly</li>
+            <li>Use lazy loading for lists</li>
+            <li>Optimize database queries</li>
+        </ul>
+    </div>
+    <div class="warning-box">
+        <strong>❌ DON'T:</strong>
+        <ul>
+            <li>Load all products at once</li>
+            <li>Fetch data on every build</li>
+            <li>Forget to dispose resources</li>
+        </ul>
+    </div>
+
+    <h2>Summary</h2>
+    <p>The Products feature demonstrates:</p>
+    <ol>
+        <li><strong>Clean Architecture</strong>: Clear separation of concerns</li>
+        <li><strong>Offline-First</strong>: Seamless offline experience</li>
+        <li><strong>State Management</strong>: Reactive UI with Cubit</li>
+        <li><strong>Error Handling</strong>: Robust error management</li>
+        <li><strong>Pagination</strong>: Efficient data loading</li>
+        <li><strong>User Experience</strong>: Loading states, pull-to-refresh, infinite scroll</li>
+    </ol>
+    <p>This implementation serves as a template for other features requiring offline support and pagination.</p>
+
+</body>
+</html>

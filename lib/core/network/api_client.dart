@@ -1,14 +1,19 @@
 import 'package:dio/dio.dart';
+import '../di/dependency_injection.dart';
+import '../storage/app_pref.dart';
+import 'api_logger_interceptor.dart';
 
 class ApiClient {
   final String baseUrl;
   final Dio dio;
   final Map<String, String> defaultHeaders;
+  final bool enableLogging;
 
   ApiClient({
     required this.baseUrl,
     Dio? dio,
     Map<String, String>? defaultHeaders,
+    this.enableLogging = true,
   }) : dio =
            dio ??
            Dio(
@@ -26,7 +31,28 @@ class ApiClient {
            ),
        defaultHeaders =
            defaultHeaders ??
-           {'Content-Type': 'application/json', 'Accept': 'application/json'};
+           {'Content-Type': 'application/json', 'Accept': 'application/json'} {
+    // Add logger interceptor if logging is enabled
+    if (enableLogging) {
+      this.dio.interceptors.add(ApiLoggerInterceptor());
+    }
+
+    // Best Practice: Automatically set auth token if available
+    _loadAuthToken();
+  }
+
+  /// Load authentication token from shared preferences
+  /// Best Practice: Automatically include token in API requests
+  void _loadAuthToken() {
+    try {
+      final token = sl<AppPref>().getToken();
+      if (token.isNotEmpty) {
+        setAuthToken(token);
+      }
+    } catch (e) {
+      // AppPref not initialized yet, skip token loading
+    }
+  }
 
   Future<Map<String, dynamic>> get(
     String endpoint, {
@@ -175,14 +201,24 @@ class ApiClient {
     );
   }
 
+  /// Set authentication token
+  /// Best Practice: Automatically called when token is saved to AppPref
   void setAuthToken(String token) {
     dio.options.headers['Authorization'] = 'Bearer $token';
     defaultHeaders['Authorization'] = 'Bearer $token';
   }
 
+  /// Remove authentication token
+  /// Best Practice: Called on logout to clear auth headers
   void removeAuthToken() {
     dio.options.headers.remove('Authorization');
     defaultHeaders.remove('Authorization');
+  }
+
+  /// Refresh authentication token from shared preferences
+  /// Best Practice: Call this after updating token in AppPref
+  void refreshAuthToken() {
+    _loadAuthToken();
   }
 
   /// Add interceptor for logging, error handling, etc.

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Feature - Complete Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        pre code {
+            background-color: transparent;
+            color: #ecf0f1;
+            padding: 0;
+        }
+        .checkmark {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .warning {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .toc {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            text-decoration: none;
+            color: #3498db;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .architecture-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+            font-family: monospace;
+            white-space: pre;
+        }
+        .benefits {
+            background-color: #d5f4e6;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
+            margin: 15px 0;
+        }
+        .note {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Authentication Feature - Complete Guide</h1>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <ul>
+        <li><a href="#overview">1. Overview</a></li>
+        <li><a href="#architecture">2. Architecture</a></li>
+        <li><a href="#file-structure">3. File Structure</a></li>
+        <li><a href="#component-details">4. Component Details</a></li>
+        <li><a href="#data-flow">5. Data Flow</a></li>
+        <li><a href="#state-management">6. State Management</a></li>
+        <li><a href="#ui-components">7. UI Components</a></li>
+        <li><a href="#usage-examples">8. Usage Examples</a></li>
+        <li><a href="#adding-new-features">9. Adding New Features</a></li>
+        <li><a href="#recent-updates">10. Recent Updates & Best Practices</a></li>
+    </ul>
+</div>
+
+<h2 id="overview">Overview</h2>
+
+<p>The Authentication feature implements a complete login/logout system following <strong>Clean Architecture</strong> principles. It demonstrates:</p>
+
+<ul>
+    <li><span class="checkmark">✅</span> <strong>Clean Architecture</strong> (Domain, Data, Presentation layers)</li>
+    <li><span class="checkmark">✅</span> <strong>Repository Pattern</strong> (Abstract interface + Implementation)</li>
+    <li><span class="checkmark">✅</span> <strong>Use Case Pattern</strong> (Business logic encapsulation)</li>
+    <li><span class="checkmark">✅</span> <strong>State Management</strong> (Cubit/Bloc pattern)</li>
+    <li><span class="checkmark">✅</span> <strong>Dependency Injection</strong> (GetIt service locator)</li>
+    <li><span class="checkmark">✅</span> <strong>Error Handling</strong> (Either/Left/Right pattern)</li>
+    <li><span class="checkmark">✅</span> <strong>Multi-Screen State Sharing</strong> (App-level Cubit provider)</li>
+</ul>
+
+<h3>Features Implemented</h3>
+
+<ul>
+    <li><span class="checkmark">✅</span> User login with email/password</li>
+    <li><span class="checkmark">✅</span> Remember me functionality</li>
+    <li><span class="checkmark">✅</span> Token management (access + refresh tokens)</li>
+    <li><span class="checkmark">✅</span> Automatic navigation after login</li>
+    <li><span class="checkmark">✅</span> Logout functionality</li>
+    <li><span class="checkmark">✅</span> Authentication state persistence</li>
+    <li><span class="checkmark">✅</span> Mock API support for development</li>
+    <li><span class="checkmark">✅</span> Error handling and user feedback</li>
+</ul>
+
+<h2 id="architecture">Architecture</h2>
+
+<h3>Clean Architecture Layers</h3>
+
+<div class="architecture-box">┌─────────────────────────────────────────┐
+│         PRESENTATION LAYER              │
+│  (UI, Widgets, State Management)        │
+│  - LoginScreen                          │
+│  - AuthCubit (State Management)        │
+│  - AuthState (Freezed)                  │
+│  - Reusable Widgets                    │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│           DOMAIN LAYER                   │
+│  (Business Logic, Entities)             │
+│  - LoginEntity                          │
+│  - AuthRepository (Interface)           │
+│  - LoginUseCase                         │
+│  - LoginParams                          │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│            DATA LAYER                    │
+│  (API, Storage, Models)                 │
+│  - AuthRepositoryImpl                   │
+│  - AuthRemoteDataSource (Interface)     │
+│  - AuthRemoteDataSourceImpl            │
+│  - LoginResponse (Model)                │
+│  - LoginMapper                          │
+└─────────────────────────────────────────┘</div>
+
+<h3>Dependency Flow</h3>
+
+<div class="architecture-box">UI (LoginScreen)
+    ↓
+AuthCubit (State Management)
+    ↓
+LoginUseCase (Business Logic)
+    ↓
+AuthRepository (Interface)
+    ↓
+AuthRepositoryImpl (Implementation)
+    ↓
+AuthRemoteDataSource (Interface)
+    ↓
+AuthRemoteDataSourceImpl (API Calls)
+    ↓
+ApiClient (HTTP Client)</div>
+
+<h2 id="file-structure">File Structure</h2>
+
+<pre><code>lib/features/auth/
+├── auth_injection.dart                    # Dependency Injection setup
+│
+├── domain/                                # Business Logic Layer
+│   ├── entities/
+│   │   └── login_entity.dart             # Domain entity (pure Dart)
+│   ├── repositories/
+│   │   └── auth_repository.dart          # Repository interface
+│   └── use_cases/
+│       └── login_use_case.dart           # Login business logic
+│
+├── data/                                  # Data Layer
+│   ├── data_sources/
+│   │   ├── auth_remote_data_source.dart  # Data source interface
+│   │   └── auth_remote_data_source_impl.dart  # API implementation
+│   ├── models/
+│   │   └── login_response.dart           # API response model
+│   ├── mappers/
+│   │   └── login_mapper.dart             # Model → Entity mapper
+│   └── repositories/
+│       └── auth_repository_impl.dart     # Repository implementation
+│
+└── presentation/                          # UI Layer
+    ├── cubit/
+    │   ├── auth_cubit.dart               # State management
+    │   ├── auth_state.dart                # State definition (Freezed)
+    │   └── auth_state.freezed.dart       # Generated code
+    ├── pages/
+    │   └── login_screen.dart             # Login UI screen
+    └── widgets/
+        ├── remember_me_forgot_password_row_widget.dart
+        ├── sign_up_row_widget.dart
+        └── welcome_back_widget.dart</code></pre>
+
+<h2 id="component-details">Component Details</h2>
+
+<h3>1. Domain Layer</h3>
+
+<h4>LoginEntity</h4>
+
+<p>Pure Dart class representing the business entity (no framework dependencies).</p>
+
+<pre><code>class LoginEntity extends Equatable {
+  final String token;
+  final String userId;
+  final String email;
+  final String? refreshToken;
+  final DateTime? expiresAt;
+}</code></pre>
+
+<p><strong>Purpose:</strong></p>
+<ul>
+    <li>Represents authentication data in the domain layer</li>
+    <li>Framework-independent (can be used in any layer)</li>
+    <li>Immutable (using Equatable for value comparison)</li>
+</ul>
+
+<h4>AuthRepository</h4>
+
+<p>Abstract interface defining authentication operations.</p>
+
+<pre><code>abstract class AuthRepository {
+  Future&lt;Either&lt;ErrorMsg, LoginEntity&gt;&gt; loginUser({
+    required LoginParams params,
+  });
+  
+  Future&lt;Either&lt;ErrorMsg, void&gt;&gt; logout();
+  
+  Future&lt;Either&lt;ErrorMsg, bool&gt;&gt; isAuthenticated();
+}</code></pre>
+
+<p><strong>Purpose:</strong></p>
+<ul>
+    <li>Defines contract for authentication operations</li>
+    <li>Allows different implementations (API, local storage, etc.)</li>
+    <li>Returns <code>Either&lt;ErrorMsg, T&gt;</code> for error handling</li>
+</ul>
+
+<h3>2. Data Layer</h3>
+
+<h4>LoginResponse</h4>
+
+<p>API response model with JSON serialization.</p>
+
+<pre><code>class LoginResponse {
+  final String token;
+  final String userId;
+  final String email;
+  final String? refreshToken;
+  final int? expiresIn;
+
+  factory LoginResponse.fromJson(Map&lt;String, dynamic&gt; json);
+  Map&lt;String, dynamic&gt; toJson();
+}</code></pre>
+
+<h4>LoginMapper</h4>
+
+<p>Converts API model to domain entity.</p>
+
+<pre><code>class LoginMapper {
+  static LoginEntity toEntity(LoginResponse response) {
+    return LoginEntity(
+      token: response.token,
+      userId: response.userId,
+      email: response.email,
+      refreshToken: response.refreshToken,
+      expiresAt: response.expiresIn != null
+          ? DateTime.now().add(Duration(seconds: response.expiresIn!))
+          : null,
+    );
+  }
+}</code></pre>
+
+<h3>3. Presentation Layer</h3>
+
+<h4>AuthState</h4>
+
+<p>Immutable state class using Freezed.</p>
+
+<pre><code>@freezed
+class AuthState with _$AuthState {
+  const factory AuthState({
+    @Default(StateStatus.idle) StateStatus loginStatus,
+    @Default(StateStatus.idle) StateStatus verifyOtpState,
+    LoginEntity? loginEntity,
+    @Default(false) bool rememberMe,
+  }) = _AuthState;
+}</code></pre>
+
+<h4>AuthCubit</h4>
+
+<p>State management for authentication.</p>
+
+<p><strong>Key Methods:</strong></p>
+<ol>
+    <li><strong>toggleRememberMe(bool value)</strong> - Updates remember me checkbox state</li>
+    <li><strong>loginUser(...)</strong> - Initiates login process, saves token, navigates</li>
+    <li><strong>logout()</strong> - Clears authentication data, resets state</li>
+</ol>
+
+<h2 id="data-flow">Data Flow</h2>
+
+<h3>Login Flow</h3>
+
+<ol>
+    <li>User enters email/password</li>
+    <li>LoginScreen calls AuthCubit.loginUser()</li>
+    <li>AuthCubit emits loading state</li>
+    <li>AuthCubit calls LoginUseCase.call()</li>
+    <li>LoginUseCase calls AuthRepository.loginUser()</li>
+    <li>AuthRepositoryImpl calls AuthRemoteDataSource.login()</li>
+    <li>AuthRemoteDataSourceImpl makes API call (or returns mock)</li>
+    <li>LoginResponse model created from JSON</li>
+    <li>LoginMapper converts LoginResponse → LoginEntity</li>
+    <li>Either&lt;ErrorMsg, LoginEntity&gt; returned up the chain</li>
+    <li>AuthCubit handles result:
+        <ul>
+            <li>Success: Save token, update ApiClient, emit success, navigate</li>
+            <li>Error: Emit error, show error message</li>
+        </ul>
+    </li>
+</ol>
+
+<h2 id="state-management">State Management</h2>
+
+<h3>Provider Strategy</h3>
+
+<p><strong>AuthCubit is provided at App-Level</strong> using <code>MultiBlocProvider</code>:</p>
+
+<pre><code>// flutter_sample_app.dart
+MultiBlocProvider(
+  providers: [
+    BlocProvider(create: (context) =&gt; sl&lt;AppCubit&gt;()),
+    BlocProvider.value(value: sl&lt;AuthCubit&gt;()), // ✅ Shared instance
+  ],
+  child: MaterialApp.router(...),
+)</code></pre>
+
+<div class="benefits">
+<p><strong>Why App-Level?</strong></p>
+<ul>
+    <li><span class="checkmark">✅</span> Shared across multiple auth screens (login, OTP, password recovery, logout)</li>
+    <li><span class="checkmark">✅</span> State persists between navigation</li>
+    <li><span class="checkmark">✅</span> Same instance reused (lazy singleton)</li>
+</ul>
+</div>
+
+<h2 id="usage-examples">Usage Examples</h2>
+
+<h3>1. Basic Login</h3>
+
+<pre><code>// In LoginScreen
+void _handleLogin(BuildContext context) {
+  if (_formKey.currentState!.validate()) {
+    context.read&lt;AuthCubit&gt;().loginUser(
+      context: context,
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+  }
+}</code></pre>
+
+<h3>2. Access Auth State</h3>
+
+<pre><code>// Get current login status
+final loginStatus = context.watch&lt;AuthCubit&gt;().state.loginStatus;
+
+// Get user data
+final loginEntity = context.watch&lt;AuthCubit&gt;().state.loginEntity;
+final email = loginEntity?.email;</code></pre>
+
+<h3>3. Logout</h3>
+
+<pre><code>// In any screen
+ElevatedButton(
+  onPressed: () {
+    context.read&lt;AuthCubit&gt;().logout();
+    // Navigate to login if needed
+  },
+  child: Text('Logout'),
+)</code></pre>
+
+<h2 id="adding-new-features">Adding New Features</h2>
+
+<h3>Guide: Adding Verify OTP Feature</h3>
+
+<p>Complete step-by-step guide for adding a new feature following Clean Architecture:</p>
+
+<ol>
+    <li><strong>Create Entity</strong> (Domain layer)</li>
+    <li><strong>Create Use Case</strong> (Domain layer)</li>
+    <li><strong>Update Repository Interface</strong> (Domain layer)</li>
+    <li><strong>Create Model</strong> (Data layer)</li>
+    <li><strong>Create Mapper</strong> (Data layer)</li>
+    <li><strong>Update Data Source</strong> (Data layer)</li>
+    <li><strong>Update Repository Implementation</strong> (Data layer)</li>
+    <li><strong>Update State</strong> (Presentation layer)</li>
+    <li><strong>Add Method to Cubit</strong> (Presentation layer)</li>
+    <li><strong>Update Dependency Injection</strong></li>
+    <li><strong>Create UI Screen</strong> (Presentation layer)</li>
+    <li><strong>Add Route</strong></li>
+</ol>
+
+<div class="note">
+<p><strong>Note:</strong> See the full markdown documentation for detailed code examples for each step.</p>
+</div>
+
+<h2 id="recent-updates">Recent Updates & Best Practices</h2>
+
+<h3>1. Multi-Screen Cubit Sharing ✅</h3>
+
+<p><strong>What Changed:</strong></p>
+<ul>
+    <li><code>AuthCubit</code> moved from route-level to app-level provider</li>
+    <li>Changed from <code>registerFactory</code> to <code>registerLazySingleton</code></li>
+</ul>
+
+<p><strong>Why:</strong></p>
+<ul>
+    <li>Auth flow spans multiple screens (login → OTP → password recovery)</li>
+    <li>State needs to persist between navigation</li>
+    <li>Same instance shared across all auth screens</li>
+</ul>
+
+<div class="benefits">
+<p><strong>Benefits:</strong></p>
+<ul>
+    <li><span class="checkmark">✅</span> State persists between screens</li>
+    <li><span class="checkmark">✅</span> Email from login available in OTP screen</li>
+    <li><span class="checkmark">✅</span> Lazy loading (created on first access)</li>
+</ul>
+</div>
+
+<h3>2. Remember Me with Cubit State ✅</h3>
+
+<p><strong>What Changed:</strong></p>
+<ul>
+    <li>Remember me checkbox state moved from local <code>setState</code> to Cubit</li>
+</ul>
+
+<div class="benefits">
+<p><strong>Benefits:</strong></p>
+<ul>
+    <li><span class="checkmark">✅</span> No setState needed</li>
+    <li><span class="checkmark">✅</span> State managed centrally</li>
+    <li><span class="checkmark">✅</span> Can be accessed from any screen</li>
+</ul>
+</div>
+
+<h3>3. Automatic Navigation After Login ✅</h3>
+
+<p><strong>What Changed:</strong></p>
+<ul>
+    <li>Navigation moved from <code>BlocListener</code> in UI to <code>AuthCubit</code></li>
+</ul>
+
+<div class="benefits">
+<p><strong>Benefits:</strong></p>
+<ul>
+    <li><span class="checkmark">✅</span> Navigation logic in business layer</li>
+    <li><span class="checkmark">✅</span> Consistent navigation behavior</li>
+    <li><span class="checkmark">✅</span> No need for BlocListener in UI</li>
+</ul>
+</div>
+
+<h3>4. Logout with State Reset ✅</h3>
+
+<p><strong>What Changed:</strong></p>
+<ul>
+    <li>Added <code>logout()</code> method that resets state</li>
+</ul>
+
+<div class="benefits">
+<p><strong>Benefits:</strong></p>
+<ul>
+    <li><span class="checkmark">✅</span> Clean state after logout</li>
+    <li><span class="checkmark">✅</span> No stale data</li>
+    <li><span class="checkmark">✅</span> Ready for next login</li>
+</ul>
+</div>
+
+<h3>5. Mock API Support ✅</h3>
+
+<p><strong>What Changed:</strong></p>
+<ul>
+    <li>Added mock API responses for development</li>
+</ul>
+
+<div class="benefits">
+<p><strong>Benefits:</strong></p>
+<ul>
+    <li><span class="checkmark">✅</span> Development without backend</li>
+    <li><span class="checkmark">✅</span> Consistent test data</li>
+    <li><span class="checkmark">✅</span> Faster development cycle</li>
+</ul>
+</div>
+
+<h2>Best Practices Summary</h2>
+
+<h3>✅ DO:</h3>
+
+<ol>
+    <li><strong>Use Clean Architecture</strong> - Separate Domain, Data, Presentation layers</li>
+    <li><strong>Use Either Pattern for Error Handling</strong> - <code>Either&lt;ErrorMsg, T&gt;</code> for all repository methods</li>
+    <li><strong>Use Use Cases for Business Logic</strong> - Single responsibility, testable in isolation</li>
+    <li><strong>Use Mappers for Data Transformation</strong> - Model → Entity conversion</li>
+    <li><strong>Provide Multi-Screen Cubits at App-Level</strong> - Use lazy singleton for shared state</li>
+    <li><strong>Use BlocSelector for Efficient Rebuilds</strong> - Only rebuild when specific state changes</li>
+    <li><strong>Save Tokens Immediately After Login</strong> - Update <code>AppPref</code> and <code>ApiClient</code></li>
+    <li><strong>Reset State on Logout</strong> - Clear all auth data, reset to initial state</li>
+</ol>
+
+<h3>❌ DON'T:</h3>
+
+<ol>
+    <li><strong>Don't Mix Layers</strong> - Don't use UI widgets in domain layer</li>
+    <li><strong>Don't Use setState for Cubit State</strong> - Use Cubit methods to update state</li>
+    <li><strong>Don't Create New Instances for Shared Cubits</strong> - Use lazy singleton for multi-screen Cubits</li>
+    <li><strong>Don't Forget Error Handling</strong> - Always handle <code>Either.left</code> (errors)</li>
+    <li><strong>Don't Hardcode API URLs</strong> - Use <code>AppUrls</code> constants</li>
+</ol>
+
+<h2>Summary</h2>
+
+<p>The Authentication feature demonstrates:</p>
+
+<ul>
+    <li><span class="checkmark">✅</span> <strong>Clean Architecture</strong> with clear layer separation</li>
+    <li><span class="checkmark">✅</span> <strong>Repository Pattern</strong> for data abstraction</li>
+    <li><span class="checkmark">✅</span> <strong>Use Case Pattern</strong> for business logic</li>
+    <li><span class="checkmark">✅</span> <strong>State Management</strong> with Cubit/Bloc</li>
+    <li><span class="checkmark">✅</span> <strong>Multi-Screen State Sharing</strong> with app-level providers</li>
+    <li><span class="checkmark">✅</span> <strong>Error Handling</strong> with Either pattern</li>
+    <li><span class="checkmark">✅</span> <strong>Mock API Support</strong> for development</li>
+    <li><span class="checkmark">✅</span> <strong>Reusable UI Components</strong></li>
+</ul>
+
+<p>This architecture is scalable, testable, and maintainable. Use it as a template for other features in your application.</p>
+
+<hr>
+
+<p><strong>Last Updated:</strong> 2024<br>
+<strong>Version:</strong> 1.0.0</p>
+
+</body>
+</html>

@@ -1,3 +1,4 @@
+import '../../../../core/constants/mockapi_responses.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/app_urls.dart';
 import '../models/login_response.dart';
@@ -11,6 +12,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<LoginResponse> login(String email, String password) async {
     try {
+      // Check if mock mode is enabled (kDebugMode)
+      if (MockApiResponses.useMockData) {
+        // Simulate network delay
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        // Return mock response
+        final mockResponse = MockApiResponses.mockLoginResponse;
+        // Update email in mock response to match the login email
+        mockResponse['email'] = email;
+
+        return LoginResponse.fromJson(mockResponse);
+      }
+
+      // Real API call
       final response = await apiClient.post(
         AppUrls.login,
         body: {'email': email, 'password': password},

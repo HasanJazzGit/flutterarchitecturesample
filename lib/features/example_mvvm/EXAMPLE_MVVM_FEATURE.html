@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example MVVM Feature - Complete Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+        pre code {
+            background-color: transparent;
+            color: #ecf0f1;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .toc {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            text-decoration: none;
+            color: #3498db;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .architecture-box {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .feature-list li:before {
+            content: "✅ ";
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .tip {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Example MVVM Feature - Complete Guide</h1>
+
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#overview">1. Overview</a></li>
+            <li><a href="#mvvm-architecture">2. MVVM Architecture</a></li>
+            <li><a href="#file-structure">3. File Structure</a></li>
+            <li><a href="#component-details">4. Component Details</a></li>
+            <li><a href="#data-flow">5. Data Flow</a></li>
+            <li><a href="#state-management">6. State Management</a></li>
+            <li><a href="#ui-components">7. UI Components</a></li>
+            <li><a href="#usage-examples">8. Usage Examples</a></li>
+            <li><a href="#adding-new-features">9. Adding New Features</a></li>
+            <li><a href="#best-practices">10. Best Practices</a></li>
+            <li><a href="#mvvm-vs-clean-architecture">11. MVVM vs Clean Architecture</a></li>
+        </ul>
+    </div>
+
+    <h2 id="overview">Overview</h2>
+    <p>The <strong>Example MVVM</strong> feature is a complete, working example demonstrating <strong>MVVM (Model-View-ViewModel)</strong> architecture pattern in Flutter. It implements a Task management feature with full CRUD operations following pure MVVM principles.</p>
+
+    <h3>What This Feature Demonstrates</h3>
+    <ul class="feature-list">
+        <li>MVVM Architecture (Model, View, ViewModel layers)</li>
+        <li>Model Layer (Data models, JSON serialization)</li>
+        <li>View Layer (UI components, pages, widgets)</li>
+        <li>ViewModel Layer (Business logic, state management with Cubit)</li>
+        <li>Data Layer (Data sources, repositories)</li>
+        <li>Dependency Injection (GetIt service locator)</li>
+        <li>Error Handling (Either/Left/Right pattern)</li>
+        <li>CRUD Operations (Create, Read, Update, Delete)</li>
+        <li>Separation of Concerns (Clear layer boundaries)</li>
+    </ul>
+
+    <h3>Features Implemented</h3>
+    <ul class="feature-list">
+        <li>Create new tasks</li>
+        <li>View all tasks</li>
+        <li>Update existing tasks</li>
+        <li>Delete tasks</li>
+        <li>Toggle task completion status</li>
+        <li>Task categories</li>
+        <li>Pull-to-refresh</li>
+        <li>Loading states</li>
+        <li>Error handling</li>
+        <li>Empty state handling</li>
+    </ul>
+
+    <h2 id="mvvm-architecture">MVVM Architecture</h2>
+    <h3>MVVM Pattern Overview</h3>
+    <p>MVVM (Model-View-ViewModel) is an architectural pattern that separates the UI (View) from business logic (ViewModel) and data (Model).</p>
+
+    <div class="architecture-box">
+        <pre>
+┌─────────────────────────────────────────┐
+│              VIEW LAYER                 │
+│  (UI, Widgets, User Interaction)        │
+│  - TaskPage                             │
+│  - TaskList Widget                      │
+│  - TaskCard Widget                      │
+│  - TaskFormBottomSheet                  │
+└─────────────────────────────────────────┘
+                    ↓ (binds to)
+┌─────────────────────────────────────────┐
+│          VIEWMODEL LAYER                 │
+│  (Business Logic, State Management)     │
+│  - TaskViewModel (Cubit)                │
+│  - TaskState                            │
+└─────────────────────────────────────────┘
+                    ↓ (uses)
+┌─────────────────────────────────────────┐
+│            MODEL LAYER                   │
+│  (Data Models, Business Entities)       │
+│  - TaskModel                            │
+└─────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────┐
+│            DATA LAYER                     │
+│  (API, Storage, Repositories)            │
+│  - TaskRemoteDataSource                 │
+│  - TaskRepositoryImpl                   │
+└─────────────────────────────────────────┘
+        </pre>
+    </div>
+
+    <h3>Key Principles</h3>
+    <ol>
+        <li><strong>Model</strong>: Represents data and business logic (TaskModel)</li>
+        <li><strong>View</strong>: Displays UI and handles user input (TaskPage, widgets)</li>
+        <li><strong>ViewModel</strong>: Acts as a bridge between View and Model, manages state (TaskViewModel)</li>
+        <li><strong>Data Binding</strong>: View observes ViewModel state changes</li>
+        <li><strong>Separation</strong>: View doesn't directly interact with Model</li>
+    </ol>
+
+    <h2 id="file-structure">File Structure</h2>
+    <pre><code>lib/features/example_mvvm/
+├── example_mvvm_injection.dart          # Dependency Injection setup
+│
+├── model/                              # Model Layer
+│   └── models/
+│       └── task_model.dart             # Task data model
+│
+├── viewmodel/                          # ViewModel Layer
+│   ├── task_viewmodel.dart             # ViewModel (Cubit)
+│   └── task_state.dart                 # State class
+│
+├── view/                               # View Layer
+│   ├── pages/
+│   │   └── task_page.dart              # Main task page
+│   └── widgets/
+│       ├── task_list.dart              # List widget
+│       ├── task_card.dart              # Card widget
+│       └── task_form_bottom_sheet.dart # Create/Edit form
+│
+└── data/                               # Data Layer
+    ├── data_sources/
+    │   ├── task_remote_data_source.dart        # Data source interface
+    │   └── task_remote_data_source_impl.dart    # API implementation
+    └── repositories/
+        └── task_repository_impl.dart            # Repository implementation</code></pre>
+
+    <h2 id="component-details">Component Details</h2>
+    <h3>1. Model Layer</h3>
+    <h4>TaskModel</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/model/models/task_model.dart</code></p>
+    <p>Represents task data structure with JSON serialization.</p>
+
+    <h3>2. ViewModel Layer</h3>
+    <h4>TaskViewModel</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/viewmodel/task_viewmodel.dart</code></p>
+    <p>Manages business logic and state. Uses Cubit for state management.</p>
+
+    <h4>TaskState</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/viewmodel/task_state.dart</code></p>
+    <p>State class tracking: tasks list, loading state, error messages.</p>
+
+    <h3>3. View Layer</h3>
+    <h4>TaskPage</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/view/pages/task_page.dart</code></p>
+    <p>Main page that provides ViewModel and displays UI.</p>
+
+    <h4>TaskList Widget</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/view/widgets/task_list.dart</code></p>
+    <p>Displays list of tasks with loading, error, and empty states.</p>
+
+    <h4>TaskCard Widget</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/view/widgets/task_card.dart</code></p>
+    <p>Displays individual task card with title, description, category, completion checkbox, and delete button.</p>
+
+    <h3>4. Data Layer</h3>
+    <h4>TaskRemoteDataSource</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/data/data_sources/task_remote_data_source.dart</code></p>
+    <p>Abstract interface for remote data operations.</p>
+
+    <h4>TaskRepositoryImpl</h4>
+    <p><strong>Location:</strong> <code>lib/features/example_mvvm/data/repositories/task_repository_impl.dart</code></p>
+    <p>Repository implementation that handles data operations and error handling.</p>
+
+    <h2 id="data-flow">Data Flow</h2>
+    <h3>1. Create Task Flow</h3>
+    <ol>
+        <li>User taps FAB → TaskFormBottomSheet.show()</li>
+        <li>User fills form and taps "Create"</li>
+        <li>TaskFormBottomSheet calls TaskViewModel.createTask()</li>
+        <li>TaskViewModel emits loading state</li>
+        <li>TaskViewModel calls TaskRepositoryImpl.createTask()</li>
+        <li>Repository calls TaskRemoteDataSource.createTask()</li>
+        <li>Data source makes API call (or mock)</li>
+        <li>Repository receives response and returns Either</li>
+        <li>TaskViewModel receives result and updates state</li>
+        <li>View rebuilds with new task</li>
+    </ol>
+
+    <h3>2. Load Tasks Flow</h3>
+    <ol>
+        <li>TaskPage builds → BlocProvider creates TaskViewModel</li>
+        <li>TaskViewModel constructor calls loadTasks()</li>
+        <li>loadTasks() emits loading state</li>
+        <li>Calls TaskRepositoryImpl.getTasks()</li>
+        <li>Repository calls TaskRemoteDataSource.getTasks()</li>
+        <li>Data source makes API call (or mock)</li>
+        <li>Repository returns Either&lt;ErrorMsg, List&lt;TaskModel&gt;&gt;</li>
+        <li>TaskViewModel receives result and emits success/error state</li>
+        <li>TaskList widget rebuilds with tasks</li>
+    </ol>
+
+    <h2 id="state-management">State Management</h2>
+    <h3>State Transitions</h3>
+    <div class="architecture-box">
+        <pre>
+Initial State
+    ↓
+Loading (isLoading: true, tasks: [])
+    ↓
+    ├─→ Success (isLoading: false, tasks: [...])
+    │       ↓
+    │   Create/Update/Delete
+    │       ↓
+    │   Loading → Success (updated tasks)
+    │
+    └─→ Error (isLoading: false, errorMessage: "...")
+            ↓
+        Retry → Loading
+        </pre>
+    </div>
+
+    <h3>State Properties</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>tasks</code></td>
+                <td><code>List&lt;TaskModel&gt;</code></td>
+                <td>List of all tasks</td>
+            </tr>
+            <tr>
+                <td><code>isLoading</code></td>
+                <td><code>bool</code></td>
+                <td>Loading indicator state</td>
+            </tr>
+            <tr>
+                <td><code>errorMessage</code></td>
+                <td><code>String?</code></td>
+                <td>Error message if any</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="ui-components">UI Components</h2>
+    <h3>TaskPage</h3>
+    <ul>
+        <li><strong>AppBar</strong>: Title "MVVM Architecture Example"</li>
+        <li><strong>Body</strong>: TaskList widget</li>
+        <li><strong>FAB</strong>: Opens TaskFormBottomSheet for creating tasks</li>
+        <li><strong>Provider</strong>: BlocProvider for TaskViewModel</li>
+    </ul>
+
+    <h3>TaskList</h3>
+    <ul>
+        <li><strong>Loading</strong>: CircularProgressIndicator</li>
+        <li><strong>Error</strong>: ErrorWidget with retry button</li>
+        <li><strong>Empty</strong>: Empty state message with icon</li>
+        <li><strong>Success</strong>: ListView with RefreshIndicator</li>
+    </ul>
+
+    <h3>TaskCard</h3>
+    <ul>
+        <li><strong>Title</strong>: Task title (strikethrough if completed)</li>
+        <li><strong>Description</strong>: Task description (truncated)</li>
+        <li><strong>Category</strong>: Category badge (if available)</li>
+        <li><strong>Checkbox</strong>: Toggle completion status</li>
+        <li><strong>Date</strong>: Creation date</li>
+        <li><strong>Delete</strong>: Delete button with confirmation</li>
+    </ul>
+
+    <h2 id="usage-examples">Usage Examples</h2>
+    <h3>1. Navigate to Task Page</h3>
+    <pre><code>// From Examples page
+context.push(AppRoutes.path(AppRoutes.exampleMvvm));</code></pre>
+
+    <h3>2. Access TaskViewModel</h3>
+    <pre><code>// Read state
+final state = context.read&lt;TaskViewModel&gt;().state;
+
+// Call methods
+context.read&lt;TaskViewModel&gt;().loadTasks();
+context.read&lt;TaskViewModel&gt;().createTask(
+  title: 'Title',
+  description: 'Description',
+  category: 'Work',
+);</code></pre>
+
+    <h2 id="adding-new-features">Adding New Features</h2>
+    <h3>Example: Add Task Priority</h3>
+    <p>To add a new feature like priority, follow these steps:</p>
+    <ol>
+        <li><strong>Update Model Layer</strong>: Add priority field to TaskModel</li>
+        <li><strong>Update Data Layer</strong>: Update data sources and repository</li>
+        <li><strong>Update ViewModel Layer</strong>: Add priority to ViewModel methods</li>
+        <li><strong>Update View Layer</strong>: Add priority UI component</li>
+    </ol>
+
+    <h2 id="best-practices">Best Practices</h2>
+    <h3>1. MVVM Principles</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Keep ViewModel independent of View</li>
+            <li>Use ViewModel for all business logic</li>
+            <li>Keep View simple (only UI logic)</li>
+            <li>Use data binding (BlocBuilder/BlocListener)</li>
+            <li>Separate Model from ViewModel</li>
+        </ul>
+    </div>
+    <div class="warning-box">
+        <strong>❌ DON'T:</strong>
+        <ul>
+            <li>Put business logic in View</li>
+            <li>Access Model directly from View</li>
+            <li>Create tight coupling between layers</li>
+            <li>Mix UI logic with business logic</li>
+            <li>Skip ViewModel layer</li>
+        </ul>
+    </div>
+
+    <h3>2. ViewModel Design</h3>
+    <div class="tip">
+        <strong>✅ DO:</strong>
+        <ul>
+            <li>Use Cubit/Bloc for state management</li>
+            <li>Emit loading state before async operations</li>
+            <li>Handle errors gracefully</li>
+            <li>Keep ViewModel testable</li>
+            <li>Use repository pattern</li>
+        </ul>
+    </div>
+
+    <h2 id="mvvm-vs-clean-architecture">MVVM vs Clean Architecture</h2>
+    <h3>Comparison Table</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Aspect</th>
+                <th>MVVM</th>
+                <th>Clean Architecture</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Layers</strong></td>
+                <td>3 (Model, View, ViewModel)</td>
+                <td>3+ (Domain, Data, Presentation)</td>
+            </tr>
+            <tr>
+                <td><strong>Use Cases</strong></td>
+                <td>Optional</td>
+                <td>Required</td>
+            </tr>
+            <tr>
+                <td><strong>Entities</strong></td>
+                <td>Same as Model</td>
+                <td>Separate from Model</td>
+            </tr>
+            <tr>
+                <td><strong>Complexity</strong></td>
+                <td>Lower</td>
+                <td>Higher</td>
+            </tr>
+            <tr>
+                <td><strong>Testability</strong></td>
+                <td>Good</td>
+                <td>Excellent</td>
+            </tr>
+            <tr>
+                <td><strong>Learning Curve</strong></td>
+                <td>Easier</td>
+                <td>Steeper</td>
+            </tr>
+            <tr>
+                <td><strong>Best For</strong></td>
+                <td>Simple to medium apps</td>
+                <td>Complex, enterprise apps</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Summary</h2>
+    <p>The Example MVVM feature demonstrates:</p>
+    <ol>
+        <li><strong>Complete MVVM</strong>: Model, View, ViewModel layers</li>
+        <li><strong>State Management</strong>: Reactive UI with Cubit</li>
+        <li><strong>Data Layer</strong>: Repository pattern with data sources</li>
+        <li><strong>Error Handling</strong>: Robust error management with Either</li>
+        <li><strong>CRUD Operations</strong>: Full create, read, update, delete functionality</li>
+        <li><strong>Separation of Concerns</strong>: Clear boundaries between layers</li>
+    </ol>
+    <p>This implementation serves as a <strong>template</strong> for creating new features following MVVM principles. Use this as a reference when building MVVM-based features in your application.</p>
+
+    <h2>Key Takeaways</h2>
+    <ul>
+        <li><strong>Model Layer</strong>: Data structure and JSON serialization</li>
+        <li><strong>ViewModel Layer</strong>: Business logic and state management (Cubit)</li>
+        <li><strong>View Layer</strong>: UI components that observe ViewModel state</li>
+        <li><strong>Data Layer</strong>: Handles API calls and data operations</li>
+        <li><strong>Dependency Injection</strong>: All dependencies registered in injection file</li>
+        <li><strong>Error Handling</strong>: Either type for functional error handling</li>
+        <li><strong>Testing</strong>: ViewModel can be tested independently</li>
+    </ul>
+    <p>Follow this structure for all MVVM features to maintain consistency and testability across your application.</p>
+
+</body>
+</html>

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 @immutable
 class AppColors extends ThemeExtension<AppColors> {
   final Color primary;
+
+  final Color newCustomColor;
   final Color secondary;
   final Color tertiary;
   final Color error;
@@ -68,6 +70,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.onError,
     required this.onSurface,
     required this.onBackground,
+    required this.newCustomColor,
     this.success,
     this.warning,
     this.info,
@@ -111,6 +114,7 @@ class AppColors extends ThemeExtension<AppColors> {
     onError: Color(0xFFFFFFFF),
     onSurface: Color(0xFF1C1B1F),
     onBackground: Color(0xFF1C1B1F),
+    newCustomColor: Color(0xFF1C1B1F),
     // Custom colors
     success: Color(0xFF4CAF50),
     warning: Color(0xFFFF9800),
@@ -160,6 +164,7 @@ class AppColors extends ThemeExtension<AppColors> {
     onError: Color(0xFF690005),
     onSurface: Color(0xFFE6E1E5),
     onBackground: Color(0xFFE6E1E5),
+    newCustomColor: Color(0xFF1C1B1F),
     // Custom colors
     success: Color(0xFF66BB6A),
     warning: Color(0xFFFFA726),
@@ -238,6 +243,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? overlayDark,
   }) {
     return AppColors(
+      newCustomColor: Color(0xFF1C1B1F),
       primary: primary ?? this.primary,
       secondary: secondary ?? this.secondary,
       tertiary: tertiary ?? this.tertiary,
@@ -286,6 +292,7 @@ class AppColors extends ThemeExtension<AppColors> {
       return this;
     }
     return AppColors(
+      newCustomColor: Color(0xFF1C1B1F),
       primary: Color.lerp(primary, other.primary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       tertiary: Color.lerp(tertiary, other.tertiary, t)!,

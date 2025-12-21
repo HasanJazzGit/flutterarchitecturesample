@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration & Flavors Guide - Flutter Sample Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .toc {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin: 10px 0;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #3498db;
+            color: white;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .badge-error {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .example {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .file-structure {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 15px 0;
+        }
+        
+        .command {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        
+        .flavor-card {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .flavor-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .flavor-card ul {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ Configuration & Flavors Guide</h1>
+        <p>Complete guide for managing app configurations and flavors (development, staging, production) in this Flutter project.</p>
+        
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#what-are-flavors">What are Flavors?</a></li>
+                <li><a href="#available-flavors">Available Flavors</a></li>
+                <li><a href="#file-structure">File Structure</a></li>
+                <li><a href="#running-flavors">Running with Flavors</a></li>
+                <li><a href="#using-code">Using Flavors in Code</a></li>
+                <li><a href="#config-classes">Configuration Classes</a></li>
+                <li><a href="#customizing">Customizing Flavors</a></li>
+                <li><a href="#ide-setup">IDE Setup</a></li>
+                <li><a href="#best-practices">Best Practices</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+        
+        <h2 id="overview">📖 Overview</h2>
+        <p><strong>Flavors</strong> allow you to build different versions of your app with different configurations (API URLs, app names, debug features, etc.) without changing code.</p>
+        
+        <div class="info">
+            <h3>Benefits</h3>
+            <ul>
+                <li>✅ Different API endpoints per environment</li>
+                <li>✅ Different app names/branding</li>
+                <li>✅ Enable/disable debug features</li>
+                <li>✅ Control logging per environment</li>
+                <li>✅ Feature flags per environment</li>
+            </ul>
+        </div>
+        
+        <h2 id="what-are-flavors">🎯 What are Flavors?</h2>
+        <p>Flavors are <strong>build variants</strong> of your app. Think of them as different "modes" your app can run in:</p>
+        <ul>
+            <li><strong>Development</strong> - For local development and testing</li>
+            <li><strong>Staging</strong> - For testing before production</li>
+            <li><strong>Production</strong> - For end users</li>
+        </ul>
+        
+        <p>Each flavor can have:</p>
+        <ul>
+            <li>Different API base URLs</li>
+            <li>Different app names</li>
+            <li>Different feature flags</li>
+            <li>Different logging levels</li>
+        </ul>
+        
+        <h2 id="available-flavors">🏷️ Available Flavors</h2>
+        
+        <div class="flavor-card">
+            <h4>1. Development (Default)</h4>
+            <ul>
+                <li><strong>App Name:</strong> <code>Flutter Sample (Dev)</code></li>
+                <li><strong>API URL:</strong> <code>https://dev-api.example.com/api</code></li>
+                <li><strong>Logging:</strong> <span class="badge badge-success">✅ Enabled</span></li>
+                <li><strong>Debug Features:</strong> <span class="badge badge-success">✅ Enabled</span></li>
+                <li><strong>Use Case:</strong> Local development, debugging</li>
+            </ul>
+        </div>
+        
+        <div class="flavor-card">
+            <h4>2. Staging</h4>
+            <ul>
+                <li><strong>App Name:</strong> <code>Flutter Sample (Staging)</code></li>
+                <li><strong>API URL:</strong> <code>https://staging-api.example.com/api</code></li>
+                <li><strong>Logging:</strong> <span class="badge badge-success">✅ Enabled</span></li>
+                <li><strong>Debug Features:</strong> <span class="badge badge-success">✅ Enabled</span></li>
+                <li><strong>Use Case:</strong> Testing before production release</li>
+            </ul>
+        </div>
+        
+        <div class="flavor-card">
+            <h4>3. Production</h4>
+            <ul>
+                <li><strong>App Name:</strong> <code>Flutter Sample Architecture</code></li>
+                <li><strong>API URL:</strong> <code>https://api.example.com/api</code></li>
+                <li><strong>Logging:</strong> <span class="badge badge-error">❌ Disabled</span></li>
+                <li><strong>Debug Features:</strong> <span class="badge badge-error">❌ Disabled</span></li>
+                <li><strong>Use Case:</strong> Production release for end users</li>
+            </ul>
+        </div>
+        
+        <h2 id="file-structure">📁 File Structure</h2>
+        <div class="file-structure">
+lib/core/
+├── config/
+│   ├── app_config.dart              # Main configuration class
+│   ├── app_flavor.dart              # Flavor enum definition
+│   ├── flavor_setup_helper.dart     # Flavor initialization helper
+│   ├── flavor_usage_example.dart    # Usage examples
+│   └── flavor_commands.md           # Quick command reference
+│
+└── utils/
+    └── flavor_helper.dart            # Flavor utility helpers
+        </div>
+        
+        <h3>Key Files</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>app_config.dart</code></td>
+                    <td>Main config class - get current flavor, API URL, etc.</td>
+                </tr>
+                <tr>
+                    <td><code>app_flavor.dart</code></td>
+                    <td>Flavor enum with configuration for each flavor</td>
+                </tr>
+                <tr>
+                    <td><code>flavor_setup_helper.dart</code></td>
+                    <td>Helper for initializing and managing flavors</td>
+                </tr>
+                <tr>
+                    <td><code>flavor_helper.dart</code></td>
+                    <td>Utility methods for checking flavors, logging</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2 id="running-flavors">🚀 Running with Flavors</h2>
+        
+        <h3>Development (Default)</h3>
+        <div class="command">
+            # Run without specifying (defaults to development)<br>
+            flutter run<br><br>
+            
+            # Or explicitly<br>
+            flutter run --dart-define=APP_FLAVOR=development
+        </div>
+        
+        <h3>Staging</h3>
+        <div class="command">
+            # Run in staging mode<br>
+            flutter run --dart-define=APP_FLAVOR=staging<br><br>
+            
+            # With custom API URL override<br>
+            flutter run --dart-define=APP_FLAVOR=staging --dart-define=API_BASE_URL=https://custom-staging-api.com
+        </div>
+        
+        <h3>Production</h3>
+        <div class="command">
+            # Run in production mode<br>
+            flutter run --dart-define=APP_FLAVOR=production<br><br>
+            
+            # Build APK for production<br>
+            flutter build apk --dart-define=APP_FLAVOR=production<br><br>
+            
+            # Build iOS for production<br>
+            flutter build ios --dart-define=APP_FLAVOR=production<br><br>
+            
+            # Build App Bundle for production<br>
+            flutter build appbundle --dart-define=APP_FLAVOR=production
+        </div>
+        
+        <h3>Override API URL</h3>
+        <p>You can override the API URL for any flavor:</p>
+        <div class="command">
+            flutter run --dart-define=APP_FLAVOR=development --dart-define=API_BASE_URL=https://custom-api.com
+        </div>
+        
+        <h2 id="using-code">💻 Using Flavors in Code</h2>
+        
+        <h3>Get Current Flavor</h3>
+        <div class="example">
+            <pre><code>import 'package:fluttersampleachitecture/core/flavor/app_config.dart';
+
+final flavor = AppConfig.currentFlavor;
+print(flavor.name); // "Development", "Staging", or "Production"</code></pre>
+        </div>
+        
+        <h3>Get API URL</h3>
+        <div class="example">
+            <pre><code>import 'package:fluttersampleachitecture/core/flavor/app_config.dart';
+
+final apiUrl = AppConfig.getBaseUrl();
+// Returns flavor-specific URL or overridden URL from environment</code></pre>
+        </div>
+        
+        <h3>Check Flavor Type</h3>
+        <div class="example">
+            <pre><code>import 'package:fluttersampleachitecture/core/flavor/flavor_helper.dart';
+
+if (FlavorHelper.isDevelopment) {
+  // Development-only code
+  print('Running in development mode');
+}
+
+if (FlavorHelper.isStaging) {
+  // Staging-only code
+}
+
+if (FlavorHelper.isProduction) {
+  // Production-only code
+}</code></pre>
+        </div>
+        
+        <h3>Conditional Logging</h3>
+        <div class="example">
+            <pre><code>import 'package:fluttersampleachitecture/core/flavor/flavor_helper.dart';
+
+// Only logs if logging is enabled for current flavor
+FlavorHelper.log('Debug message');
+FlavorHelper.logError('Error occurred', exception, stackTrace);</code></pre>
+        </div>
+        
+        <h3>Flavor-Specific Configuration</h3>
+        <div class="example">
+            <pre><code>import 'package:fluttersampleachitecture/core/flavor/app_config.dart';
+import 'package:fluttersampleachitecture/core/flavor/app_flavor.dart';
+
+switch (AppConfig.currentFlavor) {
+  case AppFlavor.development:
+    // Development-specific config
+    databaseUrl = 'dev-database-url';
+    break;
+  case AppFlavor.staging:
+    // Staging-specific config
+    databaseUrl = 'staging-database-url';
+    break;
+  case AppFlavor.production:
+    // Production-specific config
+    databaseUrl = 'production-database-url';
+    break;
+}</code></pre>
+        </div>
+        
+        <h2 id="config-classes">🏗️ Configuration Classes</h2>
+        
+        <h3>AppConfig</h3>
+        <p>Main configuration class that provides access to flavor-specific settings.</p>
+        <div class="example">
+            <pre><code>class AppConfig {
+  // Get current flavor
+  static AppFlavor get currentFlavor;
+  
+  // Get flavor-specific app name
+  static String get appName;
+  
+  // Get flavor-specific API base URL
+  static String get apiBaseUrl;
+  
+  // Get base URL (with environment override support)
+  static String getBaseUrl();
+  
+  // Check if logging is enabled
+  static bool get enableLogging;
+  
+  // Check if debug features are enabled
+  static bool get enableDebugFeatures;
+}</code></pre>
+        </div>
+        
+        <h3>FlavorHelper</h3>
+        <p>Utility class for flavor-related operations.</p>
+        <div class="example">
+            <pre><code>class FlavorHelper {
+  // Get current flavor
+  static AppFlavor get currentFlavor;
+  
+  // Check flavor type
+  static bool get isDevelopment;
+  static bool get isStaging;
+  static bool get isProduction;
+  
+  // Get flavor name
+  static String get flavorName;
+  
+  // Check if logging enabled
+  static bool get shouldLog;
+  
+  // Logging methods
+  static void log(String message);
+  static void logError(String message, [Object? error, StackTrace? stackTrace]);
+}</code></pre>
+        </div>
+        
+        <h2 id="customizing">🎨 Customizing Flavors</h2>
+        
+        <h3>Edit Flavor Enum</h3>
+        <p>Edit <code>lib/core/flavor/app_flavor.dart</code> to customize flavor settings:</p>
+        <div class="example">
+            <pre><code>enum AppFlavor {
+  development(
+    appName: 'Flutter Sample (Dev)',
+    apiBaseUrl: 'https://dev-api.example.com/api',
+    enableLogging: true,
+    enableDebugFeatures: true,
+  ),
+  staging(
+    appName: 'Flutter Sample (Staging)',
+    apiBaseUrl: 'https://staging-api.example.com/api',
+    enableLogging: true,
+    enableDebugFeatures: true,
+  ),
+  production(
+    appName: 'Flutter Sample Architecture',
+    apiBaseUrl: 'https://api.example.com/api',
+    enableLogging: false,
+    enableDebugFeatures: false,
+  );
+}</code></pre>
+        </div>
+        
+        <h2 id="ide-setup">🛠️ IDE Setup</h2>
+        
+        <h3>VS Code Launch Configuration</h3>
+        <p>Create or edit <code>.vscode/launch.json</code>:</p>
+        <div class="example">
+            <pre><code>{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Development",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=APP_FLAVOR=development"]
+    },
+    {
+      "name": "Staging",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=APP_FLAVOR=staging"]
+    },
+    {
+      "name": "Production",
+      "request": "launch",
+      "type": "dart",
+      "args": ["--dart-define=APP_FLAVOR=production"]
+    }
+  ]
+}</code></pre>
+        </div>
+        
+        <h3>Android Studio Run Configuration</h3>
+        <div class="info">
+            <ol>
+                <li>Go to <strong>Run → Edit Configurations</strong></li>
+                <li>Click <strong>+</strong> → <strong>Flutter</strong></li>
+                <li>Set <strong>Name</strong>: <code>Development</code>, <code>Staging</code>, or <code>Production</code></li>
+                <li>In <strong>Additional run args</strong>, add: <code>--dart-define=APP_FLAVOR=development</code></li>
+                <li>Save and use from the run configuration dropdown</li>
+            </ol>
+        </div>
+        
+        <h2 id="best-practices">✅ Best Practices</h2>
+        
+        <div class="info">
+            <h3>1. Always Use Flavor Helpers</h3>
+            <pre><code>// ✅ Good
+if (FlavorHelper.isDevelopment) {
+  // dev code
+}
+
+// ❌ Bad
+if (AppConfig.currentFlavor == AppFlavor.development) {
+  // dev code
+}</code></pre>
+        </div>
+        
+        <div class="info">
+            <h3>2. Use Conditional Logging</h3>
+            <pre><code>// ✅ Good - Only logs if enabled
+FlavorHelper.log('Debug message');
+
+// ❌ Bad - Always logs
+print('Debug message');</code></pre>
+        </div>
+        
+        <div class="info">
+            <h3>3. Never Hardcode URLs</h3>
+            <pre><code>// ✅ Good
+final url = AppConfig.getBaseUrl();
+
+// ❌ Bad
+final url = 'https://api.example.com';</code></pre>
+        </div>
+        
+        <div class="info">
+            <h3>4. Initialize in main()</h3>
+            <pre><code>void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // ✅ Initialize flavor first
+  FlavorSetupHelper.initialize();
+  FlavorSetupHelper.printFlavorConfig();
+  
+  // Then initialize other things
+  await initDependencyInjection();
+  
+  runApp(const FlutterSampleApp());
+}</code></pre>
+        </div>
+        
+        <h2 id="troubleshooting">🔧 Troubleshooting</h2>
+        
+        <h3>Problem: Flavor Not Changing</h3>
+        <div class="warning">
+            <p><strong>Solution:</strong></p>
+            <ol>
+                <li>Check command syntax: <code>--dart-define=APP_FLAVOR=development</code></li>
+                <li>Restart the app completely (hot restart may not pick up flavor changes)</li>
+                <li>Clean build: <code>flutter clean && flutter pub get</code></li>
+            </ol>
+        </div>
+        
+        <h3>Problem: Wrong API URL</h3>
+        <div class="warning">
+            <p><strong>Solution:</strong></p>
+            <ol>
+                <li>Check <code>app_flavor.dart</code> for correct URLs</li>
+                <li>Check if <code>API_BASE_URL</code> environment variable is overriding</li>
+                <li>Use <code>AppConfig.getBaseUrl()</code> to see what URL is being used</li>
+            </ol>
+        </div>
+        
+        <h3>Problem: Logging Not Working</h3>
+        <div class="warning">
+            <p><strong>Solution:</strong></p>
+            <ol>
+                <li>Check <code>enableLogging</code> in <code>app_flavor.dart</code></li>
+                <li>Ensure using <code>FlavorHelper.log()</code> not <code>print()</code></li>
+                <li>Check flavor is set correctly</li>
+            </ol>
+        </div>
+        
+        <h2>📝 Quick Reference</h2>
+        
+        <h3>Commands</h3>
+        <div class="command">
+            # Development<br>
+            flutter run --dart-define=APP_FLAVOR=development<br><br>
+            
+            # Staging<br>
+            flutter run --dart-define=APP_FLAVOR=staging<br><br>
+            
+            # Production<br>
+            flutter run --dart-define=APP_FLAVOR=production<br>
+            flutter build apk --dart-define=APP_FLAVOR=production<br><br>
+            
+            # With custom API URL<br>
+            flutter run --dart-define=APP_FLAVOR=development --dart-define=API_BASE_URL=https://custom.com
+        </div>
+        
+        <h3>Code Snippets</h3>
+        <div class="example">
+            <pre><code>// Get current flavor
+final flavor = AppConfig.currentFlavor;
+
+// Get API URL
+final url = AppConfig.getBaseUrl();
+
+// Check flavor
+if (FlavorHelper.isDevelopment) { }
+
+// Logging
+FlavorHelper.log('Message');
+FlavorHelper.logError('Error', exception);
+
+// Feature flags
+if (AppConfig.enableDebugFeatures) { }</code></pre>
+        </div>
+        
+        <h3>File Locations</h3>
+        <ul>
+            <li><strong>Config:</strong> <code>lib/core/flavor/app_config.dart</code></li>
+            <li><strong>Flavor Enum:</strong> <code>lib/core/flavor/app_flavor.dart</code></li>
+            <li><strong>Helper:</strong> <code>lib/core/flavor/flavor_helper.dart</code></li>
+            <li><strong>Setup:</strong> <code>lib/core/flavor/flavor_setup_helper.dart</code></li>
+        </ul>
+        
+        <div class="info" style="margin-top: 40px; padding: 20px; text-align: center;">
+            <p><strong>Need Help?</strong> Check the <a href="https://docs.flutter.dev/deployment/flavors" target="_blank">Flutter Documentation on Build Modes</a></p>
+        </div>
+    </div>
+</body>
+</html>
