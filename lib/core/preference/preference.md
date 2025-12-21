@@ -375,7 +375,7 @@ void main() {
 
 2. **Secure Storage**:
    ```dart
-   // For sensitive data, use secure storage
+   // For sensitive data, use secure preference
    import 'package:flutter_secure_storage/flutter_secure_storage.dart';
    
    final secureStorage = FlutterSecureStorage();

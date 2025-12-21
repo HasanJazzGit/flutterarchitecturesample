@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-/// Products table for offline storage
+/// Products table for offline preference
 ///
 /// This table stores product data for offline support.
 /// Located in feature's database/tables folder for better modularity.

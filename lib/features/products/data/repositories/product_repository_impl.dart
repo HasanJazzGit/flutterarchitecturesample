@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/utils/connectivity_service.dart';
 import '../../domain/entities/product_list.dart';
@@ -94,7 +94,7 @@ class ProductRepositoryImpl implements ProductRepository {
         ),
       );
     } catch (e) {
-      return Left('Failed to load products from local storage: $e');
+      return Left('Failed to load products from local preference: $e');
     }
   }
 }

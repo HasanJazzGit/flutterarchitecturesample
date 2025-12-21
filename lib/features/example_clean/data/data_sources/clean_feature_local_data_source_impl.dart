@@ -4,7 +4,7 @@ import '../models/clean_feature_model.dart';
 import 'clean_feature_local_data_source.dart';
 
 /// Local data source implementation - Example for Clean Architecture
-/// Implements local storage using SharedPreferences
+/// Implements local preference using SharedPreferences
 /// This is a sample implementation for understanding Clean Architecture structure
 class CleanFeatureLocalDataSourceImpl implements CleanFeatureLocalDataSource {
   final SharedPreferences sharedPreferences;
@@ -25,7 +25,7 @@ class CleanFeatureLocalDataSourceImpl implements CleanFeatureLocalDataSource {
           )
           .toList();
     } catch (e) {
-      throw Exception('Failed to get features from local storage: $e');
+      throw Exception('Failed to get features from local preference: $e');
     }
   }
 
@@ -56,7 +56,7 @@ class CleanFeatureLocalDataSourceImpl implements CleanFeatureLocalDataSource {
 
       await saveFeatures(features);
     } catch (e) {
-      throw Exception('Failed to save feature to local storage: $e');
+      throw Exception('Failed to save feature to local preference: $e');
     }
   }
 
@@ -68,7 +68,7 @@ class CleanFeatureLocalDataSourceImpl implements CleanFeatureLocalDataSource {
       );
       await sharedPreferences.setString(_key, jsonString);
     } catch (e) {
-      throw Exception('Failed to save features to local storage: $e');
+      throw Exception('Failed to save features to local preference: $e');
     }
   }
 }

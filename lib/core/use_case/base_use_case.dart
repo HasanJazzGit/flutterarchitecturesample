@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import '../functional/functional_export.dart';
 import '../failure/exceptions.dart';
 
 /// Base use case interface
@@ -7,7 +7,6 @@ import '../failure/exceptions.dart';
 abstract class UseCase<T, Params> {
   Future<Either<ErrorMsg, T>> call(Params params);
 }
-
 
 /// Use case with no parameters
 abstract class UseCaseNoParams<T> {

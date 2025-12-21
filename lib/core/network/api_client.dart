@@ -1,20 +1,43 @@
 import 'package:dio/dio.dart';
 import '../di/dependency_injection.dart';
-import '../storage/app_pref.dart';
+import '../preference/app_pref.dart';
 import 'api_logger_interceptor.dart';
+
+/// API Client configuration
+class ApiClientConfig {
+  final Duration connectTimeout;
+  final Duration receiveTimeout;
+  final Duration sendTimeout;
+  final int maxRetries;
+  final Duration retryDelay;
+  final bool enableLogging;
+
+  const ApiClientConfig({
+    this.connectTimeout = const Duration(seconds: 30),
+    this.receiveTimeout = const Duration(seconds: 30),
+    this.sendTimeout = const Duration(seconds: 30),
+    this.maxRetries = 0,
+    this.retryDelay = const Duration(seconds: 1),
+    this.enableLogging = true,
+  });
+}
 
 class ApiClient {
   final String baseUrl;
   final Dio dio;
   final Map<String, String> defaultHeaders;
-  final bool enableLogging;
+  final ApiClientConfig config;
 
   ApiClient({
     required this.baseUrl,
     Dio? dio,
     Map<String, String>? defaultHeaders,
-    this.enableLogging = true,
-  }) : dio =
+    ApiClientConfig? config,
+  }) : config = config ?? const ApiClientConfig(),
+       defaultHeaders =
+           defaultHeaders ??
+           {'Content-Type': 'application/json', 'Accept': 'application/json'},
+       dio =
            dio ??
            Dio(
              BaseOptions(
@@ -25,15 +48,15 @@ class ApiClient {
                      'Content-Type': 'application/json',
                      'Accept': 'application/json',
                    },
-               connectTimeout: const Duration(seconds: 30),
-               receiveTimeout: const Duration(seconds: 30),
+               connectTimeout:
+                   config?.connectTimeout ?? const Duration(seconds: 30),
+               receiveTimeout:
+                   config?.receiveTimeout ?? const Duration(seconds: 30),
+               sendTimeout: config?.sendTimeout ?? const Duration(seconds: 30),
              ),
-           ),
-       defaultHeaders =
-           defaultHeaders ??
-           {'Content-Type': 'application/json', 'Accept': 'application/json'} {
+           ) {
     // Add logger interceptor if logging is enabled
-    if (enableLogging) {
+    if (this.config.enableLogging) {
       this.dio.interceptors.add(ApiLoggerInterceptor());
     }
 
@@ -54,122 +77,170 @@ class ApiClient {
     }
   }
 
+  /// GET request with retry support
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await dio.get<Map<String, dynamic>>(
+    return _executeWithRetry(
+      () => dio.get<Map<String, dynamic>>(
         endpoint,
         queryParameters: queryParameters,
-        options: Options(
-          headers: headers != null ? {...defaultHeaders, ...headers} : null,
-          validateStatus: (status) => status != null && status < 500,
-        ),
-      );
-
-      return _handleResponse(response);
-    } on DioException catch (e) {
-      throw _handleDioException(e);
-    } catch (e) {
-      throw ApiException(
-        message: 'GET request failed: ${e.toString()}',
-        statusCode: 0,
-      );
-    }
+        options: _mergeOptions(options, headers: headers),
+        cancelToken: cancelToken,
+      ),
+      'GET',
+    );
   }
 
+  /// POST request with retry support
   Future<Map<String, dynamic>> post(
     String endpoint, {
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await dio.post<Map<String, dynamic>>(
+    return _executeWithRetry(
+      () => dio.post<Map<String, dynamic>>(
         endpoint,
         data: body,
-        options: Options(
-          headers: headers != null ? {...defaultHeaders, ...headers} : null,
-          validateStatus: (status) => status != null && status < 500,
-        ),
-      );
-
-      return _handleResponse(response);
-    } on DioException catch (e) {
-      throw _handleDioException(e);
-    } catch (e) {
-      throw ApiException(
-        message: 'POST request failed: ${e.toString()}',
-        statusCode: 0,
-      );
-    }
+        options: _mergeOptions(options, headers: headers),
+        cancelToken: cancelToken,
+      ),
+      'POST',
+    );
   }
 
+  /// PUT request with retry support
   Future<Map<String, dynamic>> put(
     String endpoint, {
     Map<String, dynamic>? body,
     Map<String, String>? headers,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await dio.put<Map<String, dynamic>>(
+    return _executeWithRetry(
+      () => dio.put<Map<String, dynamic>>(
         endpoint,
         data: body,
-        options: Options(
-          headers: headers != null ? {...defaultHeaders, ...headers} : null,
-          validateStatus: (status) => status != null && status < 500,
-        ),
-      );
-
-      return _handleResponse(response);
-    } on DioException catch (e) {
-      throw _handleDioException(e);
-    } catch (e) {
-      throw ApiException(
-        message: 'PUT request failed: ${e.toString()}',
-        statusCode: 0,
-      );
-    }
+        options: _mergeOptions(options, headers: headers),
+        cancelToken: cancelToken,
+      ),
+      'PUT',
+    );
   }
 
+  /// PATCH request with retry support
+  Future<Map<String, dynamic>> patch(
+    String endpoint, {
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    return _executeWithRetry(
+      () => dio.patch<Map<String, dynamic>>(
+        endpoint,
+        data: body,
+        options: _mergeOptions(options, headers: headers),
+        cancelToken: cancelToken,
+      ),
+      'PATCH',
+    );
+  }
+
+  /// DELETE request with retry support
   Future<Map<String, dynamic>> delete(
     String endpoint, {
     Map<String, String>? headers,
     Map<String, dynamic>? data,
     Options? options,
+    CancelToken? cancelToken,
   }) async {
-    try {
-      final response = await dio.delete<Map<String, dynamic>>(
+    return _executeWithRetry(
+      () => dio.delete<Map<String, dynamic>>(
         endpoint,
         data: data,
-        options: Options(
-          headers: headers != null ? {...defaultHeaders, ...headers} : null,
-          validateStatus: (status) => status != null && status < 500,
-        ),
-      );
+        options: _mergeOptions(options, headers: headers),
+        cancelToken: cancelToken,
+      ),
+      'DELETE',
+    );
+  }
 
-      return _handleResponse(response);
-    } on DioException catch (e) {
-      throw _handleDioException(e);
-    } catch (e) {
-      throw ApiException(
-        message: 'DELETE request failed: ${e.toString()}',
-        statusCode: 0,
-      );
+  /// Execute request with retry logic
+  Future<Map<String, dynamic>> _executeWithRetry(
+    Future<Response<Map<String, dynamic>>> Function() request,
+    String method,
+  ) async {
+    int attempt = 0;
+    while (true) {
+      try {
+        final response = await request();
+        return _handleResponse(response);
+      } on DioException catch (e) {
+        // Don't retry on client errors (4xx) or cancellation
+        if (e.response?.statusCode != null &&
+                e.response!.statusCode! >= 400 &&
+                e.response!.statusCode! < 500 ||
+            e.type == DioExceptionType.cancel) {
+          throw _handleDioException(e);
+        }
+
+        // Retry on network errors or server errors (5xx)
+        attempt++;
+        if (attempt > config.maxRetries) {
+          throw _handleDioException(e);
+        }
+
+        // Wait before retry (exponential backoff)
+        await Future.delayed(
+          Duration(milliseconds: config.retryDelay.inMilliseconds * attempt),
+        );
+      } catch (e) {
+        if (e is ApiException || e is DioException) {
+          rethrow;
+        }
+        throw ApiException(
+          message: '$method request failed: ${e.toString()}',
+          statusCode: 0,
+        );
+      }
     }
   }
 
+  /// Merge options with default headers
+  Options _mergeOptions(Options? options, {Map<String, String>? headers}) {
+    final mergedHeaders = headers != null
+        ? {...defaultHeaders, ...headers}
+        : defaultHeaders;
+
+    return options != null
+        ? options.copyWith(
+            headers: mergedHeaders,
+            validateStatus:
+                options.validateStatus ??
+                (status) => status != null && status < 500,
+          )
+        : Options(
+            headers: mergedHeaders,
+            validateStatus: (status) => status != null && status < 500,
+          );
+  }
+
+  /// Handle API response
   Map<String, dynamic> _handleResponse(
     Response<Map<String, dynamic>> response,
   ) {
     final statusCode = response.statusCode ?? 0;
     final responseData = response.data;
 
-    // Handle successful status codes (200, 201)
-    if (statusCode == 200 || statusCode == 201) {
+    // Handle successful status codes (200-299)
+    if (statusCode >= 200 && statusCode < 300) {
       if (responseData == null || responseData.isEmpty) {
         return {};
       }
@@ -192,10 +263,13 @@ class ApiClient {
       return responseData;
     }
 
-    // Handle other status codes
+    // Handle error status codes
     final errorMap = responseData;
     throw ApiException(
-      message: errorMap?['message'] as String? ?? 'Request failed',
+      message:
+          errorMap?['message'] as String? ??
+          errorMap?['error'] as String? ??
+          'Request failed',
       statusCode: statusCode,
       data: errorMap,
     );
@@ -231,14 +305,23 @@ class ApiClient {
     dio.interceptors.clear();
   }
 
+  /// Handle DioException and convert to ApiException
   ApiException _handleDioException(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return ApiException(
+        return ApiTimeoutException(
           message: 'Connection timeout. Please try again.',
-          statusCode: 0,
+          timeout: 'connection',
+        );
+      case DioExceptionType.sendTimeout:
+        return ApiTimeoutException(
+          message: 'Send timeout. Please try again.',
+          timeout: 'send',
+        );
+      case DioExceptionType.receiveTimeout:
+        return ApiTimeoutException(
+          message: 'Receive timeout. Please try again.',
+          timeout: 'receive',
         );
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode ?? 0;
@@ -246,9 +329,36 @@ class ApiClient {
         String message = 'Request failed';
 
         if (errorData is Map<String, dynamic>) {
-          message = errorData['message'] as String? ?? message;
+          message =
+              errorData['message'] as String? ??
+              errorData['error'] as String? ??
+              message;
         } else if (errorData is String) {
           message = errorData;
+        }
+
+        // Create specific exceptions based on status code
+        if (statusCode == 401) {
+          return ApiUnauthorizedException(
+            message: message,
+            data: errorData is Map ? errorData as Map<String, dynamic>? : null,
+          );
+        } else if (statusCode == 403) {
+          return ApiForbiddenException(
+            message: message,
+            data: errorData is Map ? errorData as Map<String, dynamic>? : null,
+          );
+        } else if (statusCode == 404) {
+          return ApiNotFoundException(
+            message: message,
+            data: errorData is Map ? errorData as Map<String, dynamic>? : null,
+          );
+        } else if (statusCode >= 500) {
+          return ApiServerException(
+            message: message,
+            statusCode: statusCode,
+            data: errorData is Map ? errorData as Map<String, dynamic>? : null,
+          );
         }
 
         return ApiException(
@@ -257,14 +367,15 @@ class ApiClient {
           data: errorData is Map ? errorData as Map<String, dynamic>? : null,
         );
       case DioExceptionType.cancel:
-        return ApiException(message: 'Request cancelled', statusCode: 0);
+        return ApiCancelledException(message: 'Request cancelled');
       case DioExceptionType.connectionError:
-        return ApiException(
+        return ApiNetworkException(
           message: 'No internet connection. Please check your network.',
-          statusCode: 0,
         );
       case DioExceptionType.badCertificate:
-        return ApiException(message: 'Certificate error', statusCode: 0);
+        return ApiCertificateException(
+          message: 'Certificate error. Please check your connection.',
+        );
       case DioExceptionType.unknown:
         return ApiException(
           message: error.message ?? 'Unknown error occurred',
@@ -274,6 +385,7 @@ class ApiClient {
   }
 }
 
+/// Base API exception
 class ApiException implements Exception {
   final String message;
   final int statusCode;
@@ -283,4 +395,54 @@ class ApiException implements Exception {
 
   @override
   String toString() => message;
+}
+
+/// Network connection exception
+class ApiNetworkException extends ApiException {
+  ApiNetworkException({required super.message}) : super(statusCode: 0);
+}
+
+/// Timeout exception
+class ApiTimeoutException extends ApiException {
+  final String timeout; // 'connection', 'send', 'receive'
+
+  ApiTimeoutException({required super.message, required this.timeout})
+    : super(statusCode: 0);
+}
+
+/// Unauthorized exception (401)
+class ApiUnauthorizedException extends ApiException {
+  ApiUnauthorizedException({required super.message, super.data})
+    : super(statusCode: 401);
+}
+
+/// Forbidden exception (403)
+class ApiForbiddenException extends ApiException {
+  ApiForbiddenException({required super.message, super.data})
+    : super(statusCode: 403);
+}
+
+/// Not found exception (404)
+class ApiNotFoundException extends ApiException {
+  ApiNotFoundException({required super.message, super.data})
+    : super(statusCode: 404);
+}
+
+/// Server exception (5xx)
+class ApiServerException extends ApiException {
+  ApiServerException({
+    required super.message,
+    required super.statusCode,
+    super.data,
+  });
+}
+
+/// Request cancelled exception
+class ApiCancelledException extends ApiException {
+  ApiCancelledException({required super.message}) : super(statusCode: 0);
+}
+
+/// Certificate exception
+class ApiCertificateException extends ApiException {
+  ApiCertificateException({required super.message}) : super(statusCode: 0);
 }

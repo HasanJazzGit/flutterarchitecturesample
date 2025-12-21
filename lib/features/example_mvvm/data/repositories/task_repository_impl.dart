@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../model/models/task_model.dart';
 import '../data_sources/task_local_data_source.dart';
@@ -23,12 +23,12 @@ class TaskRepositoryImpl {
       // Try remote first
       final remoteTasks = await remoteDataSource.getTasks();
 
-      // Save to local storage
+      // Save to local preference
       await localDataSource.saveTasks(remoteTasks);
 
       return Right(remoteTasks);
     } catch (e) {
-      // Fallback to local storage
+      // Fallback to local preference
       try {
         final localTasks = await localDataSource.getTasks();
         return Right(localTasks);
@@ -51,7 +51,7 @@ class TaskRepositoryImpl {
         description: description,
       );
 
-      // Save to local storage
+      // Save to local preference
       await localDataSource.saveTask(task);
 
       return Right(task);

@@ -953,7 +953,7 @@ class GetCurrentUserUseCase extends UseCaseNoParams<UserEntity> {
 
   @override
   Future<Either<ErrorMsg, UserEntity>> call() async {
-    // Get current user from storage or repository
+    // Get current user from preference or repository
     // Implementation depends on your app
     return await userRepository.getCurrentUser();
   }

@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../domain/entities/clean_feature_entity.dart';
 import '../../domain/repositories/clean_feature_repository.dart';
@@ -25,7 +25,7 @@ class CleanFeatureRepositoryImpl implements CleanFeatureRepository {
       // GET: Try remote first, fallback to local
       final remoteFeatures = await remoteDataSource.getFeatures();
 
-      // Save to local storage
+      // Save to local preference
       await localDataSource.saveFeatures(remoteFeatures);
 
       // Convert to entities
@@ -34,7 +34,7 @@ class CleanFeatureRepositoryImpl implements CleanFeatureRepository {
           .toList();
       return Right(entities);
     } catch (e) {
-      // Fallback to local storage
+      // Fallback to local preference
       try {
         final localFeatures = await localDataSource.getFeatures();
         final entities = localFeatures
@@ -55,7 +55,7 @@ class CleanFeatureRepositoryImpl implements CleanFeatureRepository {
       // POST: Pass params object through to data source
       final feature = await remoteDataSource.createFeature(params);
 
-      // Save to local storage
+      // Save to local preference
       await localDataSource.saveFeature(feature);
 
       return Right(CleanFeatureMapper.toEntity(feature));

@@ -47,16 +47,13 @@ dependencies:
   # Equatable for value equality
   equatable: ^2.0.5
   
-  # Functional programming (Either type)
-  dartz: ^0.10.1
-  
   # Freezed for immutable classes
   freezed_annotation: ^2.4.1
   
   # Navigation
   go_router: ^14.2.0
   
-  # Local storage
+  # Local preference
   shared_preferences: ^2.2.2
   
   # Dependency injection

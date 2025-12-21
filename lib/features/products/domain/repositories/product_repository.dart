@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../entities/product_entity.dart';
 import '../entities/product_list.dart';

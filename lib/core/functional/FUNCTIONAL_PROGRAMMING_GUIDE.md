@@ -296,7 +296,7 @@ ServerFailure(message: 'API error', code: 500)
 // Network failure (connection errors)
 NetworkFailure(message: 'No internet connection')
 
-// Cache failure (local storage errors)
+// Cache failure (local preference errors)
 CacheFailure(message: 'Failed to save to cache')
 
 // Validation failure (input validation errors)

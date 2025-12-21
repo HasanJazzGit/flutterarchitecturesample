@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/l10n/app_localization_service.dart';
-import '../../../../core/storage/app_pref.dart';
+import '../../../../core/preference/app_pref.dart';
 import '../../../../features/app/presentation/cubit/app_state.dart';
 
 /// App-level Cubit for managing theme and language

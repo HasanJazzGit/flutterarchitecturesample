@@ -23,7 +23,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
           .map((json) => TaskModel.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw Exception('Failed to get tasks from local storage: $e');
+      throw Exception('Failed to get tasks from local preference: $e');
     }
   }
 
@@ -41,7 +41,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
 
       await saveTasks(tasks);
     } catch (e) {
-      throw Exception('Failed to save task to local storage: $e');
+      throw Exception('Failed to save task to local preference: $e');
     }
   }
 
@@ -53,7 +53,7 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
       );
       await sharedPreferences.setString(_key, jsonString);
     } catch (e) {
-      throw Exception('Failed to save tasks to local storage: $e');
+      throw Exception('Failed to save tasks to local preference: $e');
     }
   }
 }

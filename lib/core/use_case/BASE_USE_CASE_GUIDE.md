@@ -290,7 +290,7 @@ class MyParams extends Equatable {
 **Template for `UseCase<T, Params>`:**
 
 ```dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../entities/my_entity.dart';
@@ -317,7 +317,7 @@ class MyUseCase extends UseCase<MyEntity, MyParams> {
 **Template for `UseCaseNoParams<T>`:**
 
 ```dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../entities/my_entity.dart';
@@ -338,7 +338,7 @@ class GetMyDataUseCase extends UseCaseNoParams<List<MyEntity>> {
 **Template for `UseCaseVoid<Params>`:**
 
 ```dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../repositories/my_repository.dart';
@@ -358,7 +358,7 @@ class DeleteMyDataUseCase extends UseCaseVoid<DeleteMyDataParams> {
 **Template for `UseCaseVoidNoParams`:**
 
 ```dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../repositories/my_repository.dart';
@@ -457,7 +457,7 @@ class LoginParams extends Equatable {
 **Use Case:**
 ```dart
 // login_use_case.dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../entities/login_entity.dart';
@@ -493,7 +493,7 @@ result.fold(
 **Use Case:**
 ```dart
 // clean_get_features_use_case.dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../entities/clean_feature_entity.dart';
@@ -546,7 +546,7 @@ class CreateFeatureParams extends Equatable {
 **Use Case:**
 ```dart
 // clean_create_feature_use_case.dart
-import 'package:dartz/dartz.dart';
+import '../../../../core/functional/functional_export.dart';
 import '../../../../core/failure/exceptions.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../entities/clean_feature_entity.dart';

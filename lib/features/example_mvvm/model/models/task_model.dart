@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 /// Data model for Task (MVVM - Model layer)
-/// Represents task data from API or local storage
+/// Represents task data from API or local preference
 class TaskModel extends Equatable {
   final String id;
   final String title;

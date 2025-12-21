@@ -262,7 +262,7 @@ dependencies:
 ```dart
 // Add test coverage
 // Aim for 70%+ coverage
-// Test critical paths: auth, storage, network
+// Test critical paths: auth, preference, network
 ```
 
 **Impact:** High - No confidence in code changes

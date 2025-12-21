@@ -3,7 +3,7 @@ import 'app_pref.dart';
 import 'app_pref_keys.dart';
 
 /// Concrete implementation of AppPref
-/// Uses SharedPreferences directly for storage operations
+/// Uses SharedPreferences directly for preference operations
 class AppPrefImpl implements AppPref {
   final SharedPreferences _prefs;
 

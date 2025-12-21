@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../di/dependency_injection.dart';
-import '../storage/app_pref.dart';
-import '../storage/app_pref_keys.dart';
+import '../preference//app_pref.dart';
+import '../preference/app_pref_keys.dart';
 
 class AppLocalizationService {
   AppLocalizationService._();

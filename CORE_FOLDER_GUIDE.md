@@ -547,7 +547,7 @@ See `STORAGE.md` for detailed guide.
 
 **Quick Example:**
 ```dart
-// storage/app_pref_keys.dart
+// preference/app_pref_keys.dart
 class AppPrefKeys {
   // ... existing keys
   
@@ -556,7 +556,7 @@ class AppPrefKeys {
   static const String lastSyncTime = 'last_sync_time';
 }
 
-// storage/app_pref.dart
+// preference/app_pref.dart
 abstract class AppPref {
   // ... existing methods
   
@@ -567,7 +567,7 @@ abstract class AppPref {
   DateTime? getLastSyncTime();
 }
 
-// storage/app_pref_impl.dart
+// preference/app_pref_impl.dart
 class AppPrefImpl implements AppPref {
   // Implement new methods
   @override

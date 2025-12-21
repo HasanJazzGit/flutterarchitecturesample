@@ -146,7 +146,7 @@ AppPref is automatically initialized in `main.dart`. No manual initialization ne
 ### Authentication Methods
 
 ```dart
-import 'package:fluttersampleachitecture/core/storage/app_pref.dart';
+import 'package:fluttersampleachitecture/core/preference/app_pref.dart';
 
 // Save authentication token
 await AppPref.setToken('your_jwt_token');

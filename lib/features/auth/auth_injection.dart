@@ -1,6 +1,6 @@
 import '../../core/di/dependency_injection.dart';
 import '../../core/network/api_client.dart';
-import '../../core/storage/app_pref.dart';
+import '../../core/preference/app_pref.dart';
 import 'data/data_sources/auth_remote_data_source.dart';
 import 'data/data_sources/auth_remote_data_source_impl.dart';
 import 'data/repositories/auth_repository_impl.dart';

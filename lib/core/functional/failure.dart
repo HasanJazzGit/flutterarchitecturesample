@@ -35,7 +35,7 @@ class NetworkFailure extends Failure {
   String toString() => 'NetworkFailure: $message';
 }
 
-/// Cache failure (local storage errors)
+/// Cache failure (local preference errors)
 class CacheFailure extends Failure {
   const CacheFailure({
     required super.message,

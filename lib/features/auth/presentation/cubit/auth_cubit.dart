@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/enums/state_status.dart';
 import '../../../../core/network/api_client.dart';
-import '../../../../core/storage/app_pref.dart';
+import '../../../../core/preference/app_pref.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
