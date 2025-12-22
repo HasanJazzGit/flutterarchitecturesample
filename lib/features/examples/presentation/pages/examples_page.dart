@@ -10,6 +10,11 @@ class ExamplesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final val = SharedAppData.getValue<Object, String>(
+      context,
+      "test",
+      () => "",
+    );
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -36,7 +41,7 @@ class ExamplesPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-
+            if (val.isNotEmpty) Text("Shared Value: $val"),
             // Architecture Examples
             _buildSection(
               context,

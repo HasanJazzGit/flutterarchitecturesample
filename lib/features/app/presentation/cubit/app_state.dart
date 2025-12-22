@@ -1,24 +1,15 @@
-// TODO Implement this library.import 'package:equatable/equatable.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/material.dart';
 
-class AppState extends Equatable {
-  final ThemeMode themeMode;
-  final Locale locale;
+part 'app_state.freezed.dart';
 
-  const AppState({required this.themeMode, required this.locale});
+@freezed
+class AppState with _$AppState {
+  const factory AppState({
+    @Default(ThemeMode.system) ThemeMode themeMode,
+    @Default(Locale('en')) Locale locale,
+  }) = _AppState;
 
-  factory AppState.initial() {
-    return const AppState(themeMode: ThemeMode.system, locale: Locale('en'));
-  }
+  const AppState._();
 
-  AppState copyWith({ThemeMode? themeMode, Locale? locale}) {
-    return AppState(
-      themeMode: themeMode ?? this.themeMode,
-      locale: locale ?? this.locale,
-    );
-  }
-
-  @override
-  List<Object> get props => [themeMode, locale];
 }

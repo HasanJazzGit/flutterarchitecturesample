@@ -15,7 +15,7 @@ class CleanFeaturesCubit extends Cubit<CleanFeaturesState> {
   CleanFeaturesCubit({
     required this.getFeaturesUseCase,
     required this.createFeatureUseCase,
-  }) : super(CleanFeaturesState.initial()) {
+  }) : super(const CleanFeaturesState()) {
     loadFeatures();
   }
 

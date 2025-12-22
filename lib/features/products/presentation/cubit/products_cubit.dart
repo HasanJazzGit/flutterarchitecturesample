@@ -8,7 +8,7 @@ class ProductsCubit extends Cubit<ProductsState> {
   final GetProductsUseCase getProductsUseCase;
 
   ProductsCubit({required this.getProductsUseCase})
-    : super(ProductsState.initial()) {
+    : super(const ProductsState()) {
     loadProducts();
   }
 

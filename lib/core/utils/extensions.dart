@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import '../theme/app__theme_colors.dart';
 
 /// Extension on BuildContext for easy access to theme colors
 extension AppColorsExtension on BuildContext {
-  AppColors get appColors => Theme.of(this).extension<AppColors>() ?? AppColors.light;
+  AppThemeColors get appColors => Theme.of(this).extension<AppThemeColors>() ?? AppThemeColors.light;
 }
 
 /// Extension on BuildContext for easy access to theme

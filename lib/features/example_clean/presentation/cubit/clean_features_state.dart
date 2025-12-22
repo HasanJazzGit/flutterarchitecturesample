@@ -14,11 +14,5 @@ class CleanFeaturesState with _$CleanFeaturesState {
     String? errorMessage,
   }) = _CleanFeaturesState;
 
-  factory CleanFeaturesState.initial() {
-    return const CleanFeaturesState(
-      features: [],
-      isLoading: false,
-      errorMessage: null,
-    );
-  }
+  const CleanFeaturesState._();
 }

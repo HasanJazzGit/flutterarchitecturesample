@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'app__theme_colors.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.light.primary,
+        seedColor: AppThemeColors.light.primary,
         brightness: Brightness.light,
       ),
       extensions: <ThemeExtension<dynamic>>[
-        AppColors.light,
+        AppThemeColors.light,
       ],
-      scaffoldBackgroundColor: AppColors.light.background,
+      scaffoldBackgroundColor: AppThemeColors.light.background,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppColors.light.surface,
-        foregroundColor: AppColors.light.onSurface,
-        iconTheme: IconThemeData(color: AppColors.light.onSurface),
+        backgroundColor: AppThemeColors.light.surface,
+        foregroundColor: AppThemeColors.light.onSurface,
+        iconTheme: IconThemeData(color: AppThemeColors.light.onSurface),
       ),
       cardTheme: CardThemeData(
         elevation: 2,
@@ -40,7 +40,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
         ),
         filled: true,
-        fillColor: AppColors.light.surface,
+        fillColor: AppThemeColors.light.surface,
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -120,19 +120,19 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.dark.primary,
+        seedColor: AppThemeColors.dark.primary,
         brightness: Brightness.dark,
       ),
       extensions: <ThemeExtension<dynamic>>[
-        AppColors.dark,
+        AppThemeColors.dark,
       ],
-      scaffoldBackgroundColor: AppColors.dark.background,
+      scaffoldBackgroundColor: AppThemeColors.dark.background,
       appBarTheme: AppBarTheme(
         centerTitle: true,
         elevation: 0,
-        backgroundColor: AppColors.dark.surface,
-        foregroundColor: AppColors.dark.onSurface,
-        iconTheme: IconThemeData(color: AppColors.dark.onSurface),
+        backgroundColor: AppThemeColors.dark.surface,
+        foregroundColor: AppThemeColors.dark.onSurface,
+        iconTheme: IconThemeData(color: AppThemeColors.dark.onSurface),
       ),
       cardTheme: CardThemeData(
         elevation: 2,
@@ -154,7 +154,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
         ),
         filled: true,
-        fillColor: AppColors.dark.surface,
+        fillColor: AppThemeColors.dark.surface,
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(

@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'clean_features_state.dart';
+part of 'task_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -16,57 +16,51 @@ final _privateConstructorUsedError = UnsupportedError(
 );
 
 /// @nodoc
-mixin _$CleanFeaturesState {
-  List<CleanFeatureEntity> get features => throw _privateConstructorUsedError;
+mixin _$TaskState {
+  List<TaskModel> get tasks => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
-  /// Create a copy of CleanFeaturesState
+  /// Create a copy of TaskState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CleanFeaturesStateCopyWith<CleanFeaturesState> get copyWith =>
+  $TaskStateCopyWith<TaskState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CleanFeaturesStateCopyWith<$Res> {
-  factory $CleanFeaturesStateCopyWith(
-    CleanFeaturesState value,
-    $Res Function(CleanFeaturesState) then,
-  ) = _$CleanFeaturesStateCopyWithImpl<$Res, CleanFeaturesState>;
+abstract class $TaskStateCopyWith<$Res> {
+  factory $TaskStateCopyWith(TaskState value, $Res Function(TaskState) then) =
+      _$TaskStateCopyWithImpl<$Res, TaskState>;
   @useResult
-  $Res call({
-    List<CleanFeatureEntity> features,
-    bool isLoading,
-    String? errorMessage,
-  });
+  $Res call({List<TaskModel> tasks, bool isLoading, String? errorMessage});
 }
 
 /// @nodoc
-class _$CleanFeaturesStateCopyWithImpl<$Res, $Val extends CleanFeaturesState>
-    implements $CleanFeaturesStateCopyWith<$Res> {
-  _$CleanFeaturesStateCopyWithImpl(this._value, this._then);
+class _$TaskStateCopyWithImpl<$Res, $Val extends TaskState>
+    implements $TaskStateCopyWith<$Res> {
+  _$TaskStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CleanFeaturesState
+  /// Create a copy of TaskState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? features = null,
+    Object? tasks = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
     return _then(
       _value.copyWith(
-            features: null == features
-                ? _value.features
-                : features // ignore: cast_nullable_to_non_nullable
-                      as List<CleanFeatureEntity>,
+            tasks: null == tasks
+                ? _value.tasks
+                : tasks // ignore: cast_nullable_to_non_nullable
+                      as List<TaskModel>,
             isLoading: null == isLoading
                 ? _value.isLoading
                 : isLoading // ignore: cast_nullable_to_non_nullable
@@ -82,45 +76,41 @@ class _$CleanFeaturesStateCopyWithImpl<$Res, $Val extends CleanFeaturesState>
 }
 
 /// @nodoc
-abstract class _$$CleanFeaturesStateImplCopyWith<$Res>
-    implements $CleanFeaturesStateCopyWith<$Res> {
-  factory _$$CleanFeaturesStateImplCopyWith(
-    _$CleanFeaturesStateImpl value,
-    $Res Function(_$CleanFeaturesStateImpl) then,
-  ) = __$$CleanFeaturesStateImplCopyWithImpl<$Res>;
+abstract class _$$TaskStateImplCopyWith<$Res>
+    implements $TaskStateCopyWith<$Res> {
+  factory _$$TaskStateImplCopyWith(
+    _$TaskStateImpl value,
+    $Res Function(_$TaskStateImpl) then,
+  ) = __$$TaskStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    List<CleanFeatureEntity> features,
-    bool isLoading,
-    String? errorMessage,
-  });
+  $Res call({List<TaskModel> tasks, bool isLoading, String? errorMessage});
 }
 
 /// @nodoc
-class __$$CleanFeaturesStateImplCopyWithImpl<$Res>
-    extends _$CleanFeaturesStateCopyWithImpl<$Res, _$CleanFeaturesStateImpl>
-    implements _$$CleanFeaturesStateImplCopyWith<$Res> {
-  __$$CleanFeaturesStateImplCopyWithImpl(
-    _$CleanFeaturesStateImpl _value,
-    $Res Function(_$CleanFeaturesStateImpl) _then,
+class __$$TaskStateImplCopyWithImpl<$Res>
+    extends _$TaskStateCopyWithImpl<$Res, _$TaskStateImpl>
+    implements _$$TaskStateImplCopyWith<$Res> {
+  __$$TaskStateImplCopyWithImpl(
+    _$TaskStateImpl _value,
+    $Res Function(_$TaskStateImpl) _then,
   ) : super(_value, _then);
 
-  /// Create a copy of CleanFeaturesState
+  /// Create a copy of TaskState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? features = null,
+    Object? tasks = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
     return _then(
-      _$CleanFeaturesStateImpl(
-        features: null == features
-            ? _value._features
-            : features // ignore: cast_nullable_to_non_nullable
-                  as List<CleanFeatureEntity>,
+      _$TaskStateImpl(
+        tasks: null == tasks
+            ? _value._tasks
+            : tasks // ignore: cast_nullable_to_non_nullable
+                  as List<TaskModel>,
         isLoading: null == isLoading
             ? _value.isLoading
             : isLoading // ignore: cast_nullable_to_non_nullable
@@ -136,21 +126,21 @@ class __$$CleanFeaturesStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CleanFeaturesStateImpl extends _CleanFeaturesState {
-  const _$CleanFeaturesStateImpl({
-    final List<CleanFeatureEntity> features = const [],
+class _$TaskStateImpl extends _TaskState {
+  const _$TaskStateImpl({
+    final List<TaskModel> tasks = const [],
     this.isLoading = false,
     this.errorMessage,
-  }) : _features = features,
+  }) : _tasks = tasks,
        super._();
 
-  final List<CleanFeatureEntity> _features;
+  final List<TaskModel> _tasks;
   @override
   @JsonKey()
-  List<CleanFeatureEntity> get features {
-    if (_features is EqualUnmodifiableListView) return _features;
+  List<TaskModel> get tasks {
+    if (_tasks is EqualUnmodifiableListView) return _tasks;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_features);
+    return EqualUnmodifiableListView(_tasks);
   }
 
   @override
@@ -161,15 +151,15 @@ class _$CleanFeaturesStateImpl extends _CleanFeaturesState {
 
   @override
   String toString() {
-    return 'CleanFeaturesState(features: $features, isLoading: $isLoading, errorMessage: $errorMessage)';
+    return 'TaskState(tasks: $tasks, isLoading: $isLoading, errorMessage: $errorMessage)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CleanFeaturesStateImpl &&
-            const DeepCollectionEquality().equals(other._features, _features) &&
+            other is _$TaskStateImpl &&
+            const DeepCollectionEquality().equals(other._tasks, _tasks) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.errorMessage, errorMessage) ||
@@ -179,42 +169,39 @@ class _$CleanFeaturesStateImpl extends _CleanFeaturesState {
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    const DeepCollectionEquality().hash(_features),
+    const DeepCollectionEquality().hash(_tasks),
     isLoading,
     errorMessage,
   );
 
-  /// Create a copy of CleanFeaturesState
+  /// Create a copy of TaskState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CleanFeaturesStateImplCopyWith<_$CleanFeaturesStateImpl> get copyWith =>
-      __$$CleanFeaturesStateImplCopyWithImpl<_$CleanFeaturesStateImpl>(
-        this,
-        _$identity,
-      );
+  _$$TaskStateImplCopyWith<_$TaskStateImpl> get copyWith =>
+      __$$TaskStateImplCopyWithImpl<_$TaskStateImpl>(this, _$identity);
 }
 
-abstract class _CleanFeaturesState extends CleanFeaturesState {
-  const factory _CleanFeaturesState({
-    final List<CleanFeatureEntity> features,
+abstract class _TaskState extends TaskState {
+  const factory _TaskState({
+    final List<TaskModel> tasks,
     final bool isLoading,
     final String? errorMessage,
-  }) = _$CleanFeaturesStateImpl;
-  const _CleanFeaturesState._() : super._();
+  }) = _$TaskStateImpl;
+  const _TaskState._() : super._();
 
   @override
-  List<CleanFeatureEntity> get features;
+  List<TaskModel> get tasks;
   @override
   bool get isLoading;
   @override
   String? get errorMessage;
 
-  /// Create a copy of CleanFeaturesState
+  /// Create a copy of TaskState
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CleanFeaturesStateImplCopyWith<_$CleanFeaturesStateImpl> get copyWith =>
+  _$$TaskStateImplCopyWith<_$TaskStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

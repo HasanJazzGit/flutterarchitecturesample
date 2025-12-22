@@ -9,7 +9,7 @@ import 'task_state.dart';
 class TaskCubit extends Cubit<TaskState> {
   final TaskRepositoryImpl taskRepository;
 
-  TaskCubit({required this.taskRepository}) : super(TaskState.initial()) {
+  TaskCubit({required this.taskRepository}) : super(const TaskState()) {
     loadTasks();
   }
 

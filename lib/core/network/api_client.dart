@@ -23,13 +23,12 @@ class ApiClientConfig {
 }
 
 class ApiClient {
-  final String baseUrl;
+
   final Dio dio;
   final Map<String, String> defaultHeaders;
   final ApiClientConfig config;
 
   ApiClient({
-    required this.baseUrl,
     Dio? dio,
     Map<String, String>? defaultHeaders,
     ApiClientConfig? config,
@@ -41,7 +40,6 @@ class ApiClient {
            dio ??
            Dio(
              BaseOptions(
-               baseUrl: baseUrl,
                headers:
                    defaultHeaders ??
                    {
@@ -62,6 +60,7 @@ class ApiClient {
 
     // Best Practice: Automatically set auth token if available
     _loadAuthToken();
+
   }
 
   /// Load authentication token from shared preferences

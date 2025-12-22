@@ -1,6 +1,7 @@
 import '../../../../core/constants/mockapi_responses.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/app_urls.dart';
+import '../../domain/use_cases/login_use_case.dart';
 import '../models/login_response.dart';
 import 'auth_remote_data_source.dart';
 
@@ -10,7 +11,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<LoginResponse> login(String email, String password) async {
+  Future<LoginResponse> login({required LoginParams params}) async {
     try {
       // Check if mock mode is enabled (kDebugMode)
       if (MockApiResponses.useMockData) {
@@ -20,7 +21,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         // Return mock response
         final mockResponse = MockApiResponses.mockLoginResponse;
         // Update email in mock response to match the login email
-        mockResponse['email'] = email;
+        mockResponse['email'] = params.email;
 
         return LoginResponse.fromJson(mockResponse);
       }
@@ -28,7 +29,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Real API call
       final response = await apiClient.post(
         AppUrls.login,
-        body: {'email': email, 'password': password},
+        body: {'email': params.email, 'password': params.password},
       );
 
       // Validate response structure

@@ -22,8 +22,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       final response = await remoteDataSource.login(
-        params.email,
-        params.password,
+       params: params
       );
       final entity = LoginMapper.toEntity(response);
       return Right(entity);

@@ -11,7 +11,7 @@ class AppCubit extends Cubit<AppState> {
 
   AppCubit({AppPref? appPref})
     : _appPref = appPref ?? sl<AppPref>(),
-      super(AppState.initial()) {
+      super(const AppState()) {
     _loadPreferences();
   }
 

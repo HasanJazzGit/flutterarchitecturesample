@@ -5,7 +5,7 @@ class MockApiResponses {
   MockApiResponses._(); // Private constructor
 
   /// Check if mock mode is enabled (debug mode)
-  static const bool useMockData = kDebugMode;
+  static const bool useMockData = kDebugMode && true;
 
   /// Mock login response
   static Map<String, dynamic> get mockLoginResponse => {

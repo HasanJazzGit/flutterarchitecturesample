@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// App color extensions for Material 3
 @immutable
-class AppColors extends ThemeExtension<AppColors> {
+class AppThemeColors extends ThemeExtension<AppThemeColors> {
   final Color primary;
 
   final Color newCustomColor;
@@ -57,7 +57,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color? overlay;
   final Color? overlayDark;
 
-  const AppColors({
+  const AppThemeColors({
     required this.primary,
     required this.secondary,
     required this.tertiary,
@@ -101,7 +101,7 @@ class AppColors extends ThemeExtension<AppColors> {
   });
 
   // Light theme colors
-  static const AppColors light = AppColors(
+  static const AppThemeColors light = AppThemeColors(
     primary: Color(0xFF6750A4),
     secondary: Color(0xFF625B71),
     tertiary: Color(0xFF7D5260),
@@ -151,7 +151,7 @@ class AppColors extends ThemeExtension<AppColors> {
   );
 
   // Dark theme colors
-  static const AppColors dark = AppColors(
+  static const AppThemeColors dark = AppThemeColors(
     primary: Color(0xFFD0BCFF),
     secondary: Color(0xFFCCC2DC),
     tertiary: Color(0xFFEFB8C8),
@@ -201,7 +201,7 @@ class AppColors extends ThemeExtension<AppColors> {
   );
 
   @override
-  AppColors copyWith({
+  AppThemeColors copyWith({
     Color? primary,
     Color? secondary,
     Color? tertiary,
@@ -242,7 +242,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? overlay,
     Color? overlayDark,
   }) {
-    return AppColors(
+    return AppThemeColors(
       newCustomColor: Color(0xFF1C1B1F),
       primary: primary ?? this.primary,
       secondary: secondary ?? this.secondary,
@@ -287,11 +287,11 @@ class AppColors extends ThemeExtension<AppColors> {
   }
 
   @override
-  AppColors lerp(ThemeExtension<AppColors>? other, double t) {
-    if (other is! AppColors) {
+  AppThemeColors lerp(ThemeExtension<AppThemeColors>? other, double t) {
+    if (other is! AppThemeColors) {
       return this;
     }
-    return AppColors(
+    return AppThemeColors(
       newCustomColor: Color(0xFF1C1B1F),
       primary: Color.lerp(primary, other.primary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,

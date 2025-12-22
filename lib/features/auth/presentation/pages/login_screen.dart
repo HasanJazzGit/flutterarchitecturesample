@@ -35,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return Scaffold(
@@ -112,6 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleLogin(BuildContext context) {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
+      SharedAppData.setValue(context, "test", "Value from SharedAppData");
+
       context.read<AuthCubit>().loginUser(
         context: context,
         email: _emailController.text.trim(),

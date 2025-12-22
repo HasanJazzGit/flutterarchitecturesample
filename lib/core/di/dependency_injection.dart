@@ -45,10 +45,8 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<AppPref>(() => AppPrefImpl(sharedPref));
 
   // Register API Client as singleton for the whole app
-  // Using dummyjson.com for products API
-  sl.registerLazySingleton<ApiClient>(
-    () => ApiClient(baseUrl: 'https://dummyjson.com'),
-  );
+  // Endpoints are now full URLs (from AppUrls), no baseUrl needed
+  sl.registerLazySingleton<ApiClient>(() => ApiClient());
 
   // Register Database as singleton
   sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
