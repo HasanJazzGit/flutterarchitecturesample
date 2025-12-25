@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Architecture - Complete Guide with Examples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 20px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-left: 5px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        h4 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .toc li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 20px 0;
+            position: relative;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #888;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+        
+        .code-block code {
+            color: #f8f8f2;
+        }
+        
+        .keyword { color: #c678dd; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; }
+        .function { color: #61afef; }
+        .type { color: #e5c07b; }
+        .number { color: #d19a66; }
+        
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #fff;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .layer-diagram {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .layer {
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px solid;
+            position: relative;
+        }
+        
+        .layer-presentation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #5a67d8;
+            color: white;
+        }
+        
+        .layer-domain {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-color: #e91e63;
+            color: white;
+        }
+        
+        .layer-data {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-color: #2196f3;
+            color: white;
+        }
+        
+        .layer-core {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-color: #4caf50;
+            color: white;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .flow-diagram {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .flow-step {
+            background: white;
+            border-left: 5px solid #667eea;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            padding-left: 50px;
+        }
+        
+        .flow-step::before {
+            content: counter(step);
+            counter-increment: step;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .flow-container {
+            counter-reset: step;
+        }
+        
+        .file-path {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #495057;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        
+        .key-points {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+        
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .key-points li {
+            margin: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .key-points li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .checklist-item {
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .checklist-item::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        
+        .back-to-top:hover {
+            transform: scale(1.1);
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .back-to-top {
+                display: none;
+            }
+        }
+        
+        .section {
+            scroll-margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ Clean Architecture</h1>
+        <p class="subtitle">Complete Guide with Examples and Code Snippets</p>
+        
+        <div class="toc">
+            <h3>📋 Table of Contents</h3>
+            <ul>
+                <li><a href="#what-is">What is Clean Architecture?</a></li>
+                <li><a href="#principles">Core Principles</a></li>
+                <li><a href="#layers">Layer Structure</a></li>
+                <li><a href="#example">Complete Example: Login Feature</a></li>
+                <li><a href="#snippets">Code Snippets</a></li>
+                <li><a href="#practices">Best Practices</a></li>
+                <li><a href="#patterns">Common Patterns</a></li>
+                <li><a href="#testing">Testing Strategy</a></li>
+            </ul>
+        </div>
+        
+        <section id="what-is" class="section">
+            <h2>🎯 What is Clean Architecture?</h2>
+            <p>Clean Architecture is a software design pattern that separates your application into <strong>layers</strong> with clear boundaries and dependencies. The main goal is to make your code:</p>
+            
+            <div class="key-points">
+                <ul>
+                    <li><strong>Independent</strong> of frameworks, UI, and databases</li>
+                    <li><strong>Testable</strong> - each layer can be tested in isolation</li>
+                    <li><strong>Maintainable</strong> - changes in one layer don't affect others</li>
+                    <li><strong>Scalable</strong> - easy to add new features</li>
+                </ul>
+            </div>
+            
+            <h3>The Dependency Rule</h3>
+            <div class="code-block" data-lang="text">
+Outer layers depend on inner layers
+Inner layers NEVER depend on outer layers
+
+Presentation → Domain ← Data
+     ↓           ↑        ↓
+     └───────────┴────────┘
+            </div>
+            
+            <div class="info-box">
+                <strong>Key Point:</strong> Dependencies point <strong>inward</strong> toward the Domain layer.
+            </div>
+        </section>
+        
+        <section id="principles" class="section">
+            <h2>🏛️ Core Principles</h2>
+            
+            <h3>1. Separation of Concerns</h3>
+            <p>Each layer has a single, well-defined responsibility.</p>
+            
+            <h3>2. Dependency Inversion</h3>
+            <p>Depend on abstractions (interfaces), not concrete implementations.</p>
+            
+            <h3>3. Independence</h3>
+            <ul>
+                <li>Business logic is independent of UI</li>
+                <li>Business logic is independent of data sources</li>
+                <li>Framework-independent code</li>
+            </ul>
+            
+            <h3>4. Testability</h3>
+            <p>Each layer can be tested independently with mocks.</p>
+        </section>
+        
+        <section id="layers" class="section">
+            <h2>📦 Layer Structure</h2>
+            
+            <div class="layer-diagram">
+                <div class="layer layer-presentation">
+                    <h3>📱 PRESENTATION LAYER</h3>
+                    <p><strong>UI, State Management, Widgets</strong></p>
+                    <p>• Depends on: Domain only</p>
+                    <p>• Contains: Pages, Widgets, Cubits/Blocs</p>
+                </div>
+                
+                <div class="arrow">⬇️ Uses</div>
+                
+                <div class="layer layer-domain">
+                    <h3>🧠 DOMAIN LAYER</h3>
+                    <p><strong>Business Logic - Pure Dart</strong></p>
+                    <p>• Depends on: Nothing (Pure Dart)</p>
+                    <p>• Contains: Entities, Use Cases, Repository Interfaces</p>
+                </div>
+                
+                <div class="arrow">⬆️ Implemented by</div>
+                
+                <div class="layer layer-data">
+                    <h3>💾 DATA LAYER</h3>
+                    <p><strong>External Data Sources</strong></p>
+                    <p>• Depends on: Domain, Core</p>
+                    <p>• Contains: Models, Data Sources, Repository Impl</p>
+                </div>
+                
+                <div class="arrow">⬇️ Uses</div>
+                
+                <div class="layer layer-core">
+                    <h3>🔧 CORE/INFRASTRUCTURE</h3>
+                    <p><strong>Shared Utilities</strong></p>
+                    <p>• Depends on: Nothing</p>
+                    <p>• Contains: Network, Storage, DI, Utils</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="example" class="section">
+            <h2>🎓 Complete Example: Login Feature</h2>
+            <p>Let's build a complete login feature following Clean Architecture principles.</p>
+            
+            <h3>Step 1: Domain Layer - Entity</h3>
+            <p class="file-path">lib/features/auth/domain/entities/login_entity.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">import</span> <span class="string">'package:equatable/equatable.dart'</span>;
+
+<span class="keyword">class</span> <span class="type">LoginEntity</span> <span class="keyword">extends</span> <span class="type">Equatable</span> {
+  <span class="keyword">final</span> <span class="type">String</span> token;
+  <span class="keyword">final</span> <span class="type">String</span> userId;
+  <span class="keyword">final</span> <span class="type">String</span> email;
+  <span class="keyword">final</span> <span class="type">String</span>? refreshToken;
+  <span class="keyword">final</span> <span class="type">DateTime</span>? expiresAt;
+
+  <span class="keyword">const</span> <span class="function">LoginEntity</span>({
+    <span class="keyword">required</span> <span class="keyword">this</span>.token,
+    <span class="keyword">required</span> <span class="keyword">this</span>.userId,
+    <span class="keyword">required</span> <span class="keyword">this</span>.email,
+    <span class="keyword">this</span>.refreshToken,
+    <span class="keyword">this</span>.expiresAt,
+  });
+
+  <span class="keyword">@override</span>
+  <span class="type">List</span>&lt;<span class="type">Object</span>?&gt; <span class="keyword">get</span> props =&gt; [token, userId, email, refreshToken, expiresAt];
+}
+            </div>
+            
+            <div class="key-points">
+                <h4>Key Points:</h4>
+                <ul>
+                    <li>Pure Dart class (no Flutter, no HTTP, no database)</li>
+                    <li>Uses Equatable for value equality</li>
+                    <li>Represents business concept, not API structure</li>
+                    <li>Immutable (all fields are final)</li>
+                </ul>
+            </div>
+            
+            <h3>Step 2: Domain Layer - Repository Interface</h3>
+            <p class="file-path">lib/features/auth/domain/repositories/auth_repository.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">abstract class</span> <span class="type">AuthRepository</span> {
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">LoginEntity</span>&gt;&gt; <span class="function">loginUser</span>({
+    <span class="keyword">required</span> <span class="type">LoginParams</span> params,
+  });
+
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">void</span>&gt;&gt; <span class="function">logout</span>();
+
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">bool</span>&gt;&gt; <span class="function">isAuthenticated</span>();
+}
+            </div>
+            
+            <h3>Step 3: Domain Layer - Use Case</h3>
+            <p class="file-path">lib/features/auth/domain/use_cases/login_use_case.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">LoginUseCase</span> <span class="keyword">extends</span> <span class="type">UseCase</span>&lt;<span class="type">LoginEntity</span>, <span class="type">LoginParams</span>&gt; {
+  <span class="keyword">final</span> <span class="type">AuthRepository</span> authRepository;
+
+  <span class="function">LoginUseCase</span>({<span class="keyword">required</span> <span class="keyword">this</span>.authRepository});
+
+  <span class="keyword">@override</span>
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">LoginEntity</span>&gt;&gt; <span class="function">call</span>(<span class="type">LoginParams</span> params) <span class="keyword">async</span> {
+    <span class="keyword">return</span> <span class="keyword">await</span> authRepository.<span class="function">loginUser</span>(params: params);
+  }
+}
+
+<span class="keyword">class</span> <span class="type">LoginParams</span> <span class="keyword">extends</span> <span class="type">Equatable</span> {
+  <span class="keyword">final</span> <span class="type">String</span> email;
+  <span class="keyword">final</span> <span class="type">String</span> password;
+
+  <span class="keyword">const</span> <span class="function">LoginParams</span>({<span class="keyword">required</span> <span class="keyword">this</span>.email, <span class="keyword">required</span> <span class="keyword">this</span>.password});
+
+  <span class="keyword">@override</span>
+  <span class="type">List</span>&lt;<span class="type">Object</span>?&gt; <span class="keyword">get</span> props =&gt; [email, password];
+}
+            </div>
+            
+            <h3>Step 4: Data Layer - Model</h3>
+            <p class="file-path">lib/features/auth/data/models/login_response.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">LoginResponse</span> {
+  <span class="keyword">final</span> <span class="type">String</span> token;
+  <span class="keyword">final</span> <span class="type">String</span> userId;
+  <span class="keyword">final</span> <span class="type">String</span> email;
+  <span class="keyword">final</span> <span class="type">String</span>? refreshToken;
+  <span class="keyword">final</span> <span class="type">int</span>? expiresIn;
+
+  <span class="function">LoginResponse</span>({
+    <span class="keyword">required</span> <span class="keyword">this</span>.token,
+    <span class="keyword">required</span> <span class="keyword">this</span>.userId,
+    <span class="keyword">required</span> <span class="keyword">this</span>.email,
+    <span class="keyword">this</span>.refreshToken,
+    <span class="keyword">this</span>.expiresIn,
+  });
+
+  <span class="keyword">factory</span> <span class="type">LoginResponse</span>.<span class="function">fromJson</span>(<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">dynamic</span>&gt; json) {
+    <span class="keyword">return</span> <span class="type">LoginResponse</span>(
+      token: json[<span class="string">'token'</span>] <span class="keyword">as</span> <span class="type">String</span>,
+      userId: json[<span class="string">'userId'</span>] <span class="keyword">as</span> <span class="type">String</span>,
+      email: json[<span class="string">'email'</span>] <span class="keyword">as</span> <span class="type">String</span>,
+      refreshToken: json[<span class="string">'refreshToken'</span>] <span class="keyword">as</span> <span class="type">String</span>?,
+      expiresIn: json[<span class="string">'expiresIn'</span>] <span class="keyword">as</span> <span class="type">int</span>?,
+    );
+  }
+}
+            </div>
+            
+            <h3>Step 5: Data Layer - Mapper</h3>
+            <p class="file-path">lib/features/auth/data/mappers/login_mapper.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">LoginMapper</span> {
+  <span class="keyword">static</span> <span class="type">LoginEntity</span> <span class="function">toEntity</span>(<span class="type">LoginResponse</span> response) {
+    <span class="keyword">return</span> <span class="type">LoginEntity</span>(
+      token: response.token,
+      userId: response.userId,
+      email: response.email,
+      refreshToken: response.refreshToken,
+      expiresAt: response.expiresIn != <span class="keyword">null</span>
+          ? <span class="type">DateTime</span>.<span class="function">now</span>().<span class="function">add</span>(<span class="type">Duration</span>(seconds: response.expiresIn!))
+          : <span class="keyword">null</span>,
+    );
+  }
+}
+            </div>
+            
+            <h3>Step 6: Data Layer - Repository Implementation</h3>
+            <p class="file-path">lib/features/auth/data/repositories/auth_repository_impl.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">AuthRepositoryImpl</span> <span class="keyword">implements</span> <span class="type">AuthRepository</span> {
+  <span class="keyword">final</span> <span class="type">AuthRemoteDataSource</span> remoteDataSource;
+
+  <span class="function">AuthRepositoryImpl</span>(<span class="keyword">this</span>.remoteDataSource);
+
+  <span class="keyword">@override</span>
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">LoginEntity</span>&gt;&gt; <span class="function">loginUser</span>({
+    <span class="keyword">required</span> <span class="type">LoginParams</span> params,
+  }) <span class="keyword">async</span> {
+    <span class="keyword">try</span> {
+      <span class="keyword">final</span> response = <span class="keyword">await</span> remoteDataSource.<span class="function">login</span>(params: params);
+      <span class="keyword">final</span> entity = <span class="type">LoginMapper</span>.<span class="function">toEntity</span>(response);
+      <span class="keyword">return</span> <span class="type">Right</span>(entity);
+    } <span class="keyword">catch</span> (e) {
+      <span class="keyword">return</span> <span class="type">Left</span>(e.toString());
+    }
+  }
+}
+            </div>
+            
+            <h3>Step 7: Presentation Layer - Cubit</h3>
+            <p class="file-path">lib/features/auth/presentation/cubit/auth_cubit.dart</p>
+            
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">AuthCubit</span> <span class="keyword">extends</span> <span class="type">Cubit</span>&lt;<span class="type">AuthState</span>&gt; {
+  <span class="keyword">final</span> <span class="type">LoginUseCase</span> loginUseCase;
+
+  <span class="function">AuthCubit</span>(<span class="keyword">this</span>.loginUseCase) : <span class="keyword">super</span>(<span class="keyword">const</span> <span class="type">AuthState</span>());
+
+  <span class="type">Future</span>&lt;<span class="type">void</span>&gt; <span class="function">loginUser</span>({
+    <span class="keyword">required</span> <span class="type">String</span> email,
+    <span class="keyword">required</span> <span class="type">String</span> password,
+  }) <span class="keyword">async</span> {
+    <span class="keyword">emit</span>(state.<span class="function">copyWith</span>(loginStatus: <span class="type">StateStatus</span>.loading));
+
+    <span class="keyword">final</span> params = <span class="type">LoginParams</span>(email: email, password: password);
+    <span class="keyword">final</span> result = <span class="keyword">await</span> loginUseCase.<span class="function">call</span>(params);
+
+    result.<span class="function">fold</span>(
+      (error) =&gt; <span class="keyword">emit</span>(state.<span class="function">copyWith</span>(loginStatus: <span class="type">StateStatus</span>.error)),
+      (response) =&gt; <span class="keyword">emit</span>(state.<span class="function">copyWith</span>(
+        loginStatus: <span class="type">StateStatus</span>.success,
+        loginEntity: response,
+      )),
+    );
+  }
+}
+            </div>
+        </section>
+        
+        <section id="snippets" class="section">
+            <h2>📝 Code Snippets Reference</h2>
+            
+            <h3>Base Use Case</h3>
+            <div class="code-block" data-lang="dart">
+<span class="keyword">abstract class</span> <span class="type">UseCase</span>&lt;<span class="type">T</span>, <span class="type">Params</span>&gt; {
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">T</span>&gt;&gt; <span class="function">call</span>(<span class="type">Params</span> params);
+}
+            </div>
+            
+            <h3>Either Type (Error Handling)</h3>
+            <div class="code-block" data-lang="dart">
+<span class="comment">// Left = Error, Right = Success</span>
+<span class="keyword">final</span> result = <span class="keyword">await</span> useCase.<span class="function">call</span>(params);
+result.<span class="function">fold</span>(
+  (error) =&gt; <span class="function">print</span>(<span class="string">'Error: $error'</span>),
+  (data) =&gt; <span class="function">print</span>(<span class="string">'Success: $data'</span>),
+);
+            </div>
+        </section>
+        
+        <section id="practices" class="section">
+            <h2>✅ Best Practices</h2>
+            
+            <h3>Domain Layer</h3>
+            <div class="key-points">
+                <ul>
+                    <li>Pure Dart classes only</li>
+                    <li>No Flutter dependencies</li>
+                    <li>No HTTP/database dependencies</li>
+                    <li>Use Equatable for entities</li>
+                    <li>One use case = one operation</li>
+                </ul>
+            </div>
+            
+            <h3>Data Layer</h3>
+            <div class="key-points">
+                <ul>
+                    <li>Models match API structure</li>
+                    <li>Mappers convert Model → Entity</li>
+                    <li>Repository implements Domain interface</li>
+                    <li>Handle errors, convert to Either</li>
+                </ul>
+            </div>
+            
+            <h3>Presentation Layer</h3>
+            <div class="key-points">
+                <ul>
+                    <li>Use Use Cases, not Repositories directly</li>
+                    <li>Handle UI concerns only</li>
+                    <li>Use immutable state (Freezed)</li>
+                    <li>No business logic in UI</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="patterns" class="section">
+            <h2>🎯 Common Patterns</h2>
+            
+            <h3>Pattern 1: Use Case with Parameters</h3>
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">GetUserUseCase</span> <span class="keyword">extends</span> <span class="type">UseCase</span>&lt;<span class="type">UserEntity</span>, <span class="type">GetUserParams</span>&gt; {
+  <span class="keyword">final</span> <span class="type">UserRepository</span> repository;
+  
+  <span class="function">GetUserUseCase</span>(<span class="keyword">this</span>.repository);
+  
+  <span class="keyword">@override</span>
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">UserEntity</span>&gt;&gt; <span class="function">call</span>(<span class="type">GetUserParams</span> params) <span class="keyword">async</span> {
+    <span class="keyword">return</span> <span class="keyword">await</span> repository.<span class="function">getUser</span>(params.userId);
+  }
+}
+            </div>
+            
+            <h3>Pattern 2: Use Case without Parameters</h3>
+            <div class="code-block" data-lang="dart">
+<span class="keyword">class</span> <span class="type">GetProductsUseCase</span> <span class="keyword">extends</span> <span class="type">UseCaseNoParams</span>&lt;<span class="type">List</span>&lt;<span class="type">ProductEntity</span>&gt;&gt; {
+  <span class="keyword">final</span> <span class="type">ProductRepository</span> repository;
+  
+  <span class="function">GetProductsUseCase</span>(<span class="keyword">this</span>.repository);
+  
+  <span class="keyword">@override</span>
+  <span class="type">Future</span>&lt;<span class="type">Either</span>&lt;<span class="type">ErrorMsg</span>, <span class="type">List</span>&lt;<span class="type">ProductEntity</span>&gt;&gt;&gt; <span class="function">call</span>() <span class="keyword">async</span> {
+    <span class="keyword">return</span> <span class="keyword">await</span> repository.<span class="function">getProducts</span>();
+  }
+}
+            </div>
+        </section>
+        
+        <section id="testing" class="section">
+            <h2>🧪 Testing Strategy</h2>
+            
+            <h3>Test Use Case</h3>
+            <div class="code-block" data-lang="dart">
+<span class="keyword">void</span> <span class="function">main</span>() {
+  <span class="keyword">late</span> <span class="type">LoginUseCase</span> useCase;
+  <span class="keyword">late</span> <span class="type">MockAuthRepository</span> mockRepository;
+
+  <span class="function">setUp</span>(() {
+    mockRepository = <span class="type">MockAuthRepository</span>();
+    useCase = <span class="type">LoginUseCase</span>(authRepository: mockRepository);
+  });
+
+  <span class="function">test</span>(<span class="string">'should return LoginEntity when login succeeds'</span>, () <span class="keyword">async</span> {
+    <span class="comment">// Arrange</span>
+    <span class="keyword">final</span> params = <span class="type">LoginParams</span>(email: <span class="string">'test@test.com'</span>, password: <span class="string">'password'</span>);
+    <span class="keyword">final</span> entity = <span class="type">LoginEntity</span>(token: <span class="string">'token'</span>, userId: <span class="string">'1'</span>, email: <span class="string">'test@test.com'</span>);
+    <span class="function">when</span>(mockRepository.<span class="function">loginUser</span>(params: params))
+        .<span class="function">thenAnswer</span>((_) <span class="keyword">async</span> =&gt; <span class="type">Right</span>(entity));
+
+    <span class="comment">// Act</span>
+    <span class="keyword">final</span> result = <span class="keyword">await</span> useCase.<span class="function">call</span>(params);
+
+    <span class="comment">// Assert</span>
+    <span class="function">expect</span>(result, <span class="type">Right</span>(entity));
+  });
+}
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>🔄 Complete Data Flow</h2>
+            <div class="flow-container">
+                <div class="flow-step">
+                    <strong>1. User clicks Login button</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>2. LoginScreen calls AuthCubit.loginUser()</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>3. AuthCubit calls LoginUseCase.call(params)</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>4. LoginUseCase calls AuthRepository.loginUser()</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>5. AuthRepositoryImpl calls AuthRemoteDataSource.login()</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>6. AuthRemoteDataSourceImpl makes HTTP request via ApiClient</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>7. API returns JSON response</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>8. JSON → LoginResponse (Model)</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>9. LoginMapper.toEntity() → LoginEntity</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>10. Either&lt;ErrorMsg, LoginEntity&gt; flows back</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>11. AuthCubit handles result, emits state</strong>
+                </div>
+                <div class="flow-step">
+                    <strong>12. UI updates based on state</strong>
+                </div>
+            </div>
+        </section>
+        
+        <div class="success-box">
+            <h3>📚 Summary</h3>
+            <p><strong>Key Takeaways:</strong></p>
+            <ul>
+                <li><strong>Domain Layer</strong> = Business logic, pure Dart</li>
+                <li><strong>Data Layer</strong> = Implementation, external data</li>
+                <li><strong>Presentation Layer</strong> = UI, state management</li>
+                <li><strong>Dependencies point inward</strong> → Domain</li>
+                <li><strong>Use interfaces</strong> for abstraction</li>
+                <li><strong>Either pattern</strong> for error handling</li>
+                <li><strong>Test each layer</strong> independently</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; color: #666; font-size: 0.9em;">
+            <p>💡 Open this file in a browser and use Print → Save as PDF to export</p>
+            <p style="margin-top: 10px;">📖 For quick reference, see <strong>CLEAN_ARCHITECTURE_QUICK_REFERENCE.md</strong></p>
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">↑</a>
+</body>
+</html>

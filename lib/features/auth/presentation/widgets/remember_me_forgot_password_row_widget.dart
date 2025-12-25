@@ -29,6 +29,7 @@ class RememberMeForgotPasswordRowWidget extends StatelessWidget {
                 Checkbox(
                   value: rememberMe,
                   onChanged: (value) {
+
                     context.read<AuthCubit>().toggleRememberMe(value ?? false);
                   },
                   activeColor: colorScheme.primary,

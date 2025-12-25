@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter App Security Integration Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            padding: 5px 0;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .step {
+            background: #e8f4f8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .step-number {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 1.2em;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .file-path {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        
+        .checklist {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .checklist li:before {
+            content: "✅ ";
+            margin-right: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #3498db;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-android {
+            background: #3ddc84;
+            color: white;
+        }
+        
+        .badge-ios {
+            background: #007aff;
+            color: white;
+        }
+        
+        .badge-flutter {
+            background: #02569b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Flutter App Security Integration Guide</h1>
+        
+        <p><strong>Complete step-by-step guide to integrate comprehensive security checks (Root/Jailbreak, Emulator/Simulator, Developer Mode, Frida Detection) into any Flutter application.</strong></p>
+        
+        <div class="toc">
+            <h2>📋 Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">1. Overview</a></li>
+                <li><a href="#prerequisites">2. Prerequisites</a></li>
+                <li><a href="#step1">3. Step 1: Android Setup</a></li>
+                <li><a href="#step2">4. Step 2: iOS Setup</a></li>
+                <li><a href="#step3">5. Step 3: Flutter Implementation</a></li>
+                <li><a href="#step4">6. Step 4: Integration in Main App</a></li>
+                <li><a href="#step5">7. Step 5: Testing</a></li>
+                <li><a href="#troubleshooting">8. Troubleshooting</a></li>
+                <li><a href="#best-practices">9. Best Practices</a></li>
+            </ul>
+        </div>
+        
+        <h2 id="overview">🎯 Overview</h2>
+        
+        <p>This guide provides a complete security solution that detects:</p>
+        
+        <ul class="checklist">
+            <li><strong>Rooted Devices</strong> (Android)</li>
+            <li><strong>Jailbroken Devices</strong> (iOS)</li>
+            <li><strong>Emulators</strong> (Android)</li>
+            <li><strong>Simulators</strong> (iOS)</li>
+            <li><strong>Developer Mode</strong> (Android)</li>
+            <li><strong>Frida/Reverse Engineering Tools</strong></li>
+            <li><strong>External Storage Installation</strong> (Android)</li>
+            <li><strong>Device Trust Issues</strong></li>
+        </ul>
+        
+        <h2 id="prerequisites">📦 Prerequisites</h2>
+        
+        <h3>Required Packages</h3>
+        
+        <p>Add to <code>pubspec.yaml</code>:</p>
+        
+        <pre><code>dependencies:
+  flutter:
+    sdk: flutter
+  jailbreak_root_detection: ^2.0.0  # For additional Android checks</code></pre>
+        
+        <h3>Platform Requirements</h3>
+        
+        <ul>
+            <li><strong>Android:</strong> Minimum SDK 21 (Android 5.0)</li>
+            <li><strong>iOS:</strong> Minimum iOS 12.0</li>
+            <li><strong>Flutter:</strong> Latest stable version</li>
+        </ul>
+        
+        <h2 id="step1">📱 Step 1: Android Setup</h2>
+        
+        <div class="step">
+            <div class="step-number">Step 1.1: Update MainActivity.java</div>
+            <p><strong>Location:</strong> <span class="file-path">android/app/src/main/java/com/yourpackage/MainActivity.java</span></p>
+            <p>Replace the entire file with the comprehensive security implementation provided in the Markdown guide.</p>
+        </div>
+        
+        <div class="note">
+            <strong>Note:</strong> The MainActivity.java file includes:
+            <ul>
+                <li>Root detection (multiple methods)</li>
+                <li>Emulator detection</li>
+                <li>Developer mode detection</li>
+                <li>Frida detection</li>
+                <li>Two method channels (standard and obfuscated)</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">Step 1.2: Update AndroidManifest.xml</div>
+            <p><strong>Location:</strong> <span class="file-path">android/app/src/main/AndroidManifest.xml</span></p>
+            <p>Add permissions if needed for network checks.</p>
+        </div>
+        
+        <h2 id="step2">🍎 Step 2: iOS Setup</h2>
+        
+        <div class="step">
+            <div class="step-number">Step 2.1: Update AppDelegate.swift</div>
+            <p><strong>Location:</strong> <span class="file-path">ios/Runner/AppDelegate.swift</span></p>
+            <p>Replace with comprehensive jailbreak and simulator detection.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">Step 2.2: Update Info.plist</div>
+            <p><strong>Location:</strong> <span class="file-path">ios/Runner/Info.plist</span></p>
+            <p>Add URL schemes for jailbreak detection.</p>
+        </div>
+        
+        <h2 id="step3">📱 Step 3: Flutter Implementation</h2>
+        
+        <div class="step">
+            <div class="step-number">Step 3.1: Create Security Service</div>
+            <p><strong>Location:</strong> <span class="file-path">lib/core/security/security_service.dart</span></p>
+            <p>Create a comprehensive security service that combines all checks.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">Step 3.2: Create Security Widget</div>
+            <p><strong>Location:</strong> <span class="file-path">lib/core/security/security_widget.dart</span></p>
+            <p>Create a widget that blocks app access if device is compromised.</p>
+        </div>
+        
+        <h2 id="step4">🚀 Step 4: Integration in Main App</h2>
+        
+        <div class="step">
+            <div class="step-number">Step 4.1: Update main.dart</div>
+            <p>Wrap your app with <code>SecurityGate</code> widget.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">Step 4.2: Alternative Approach</div>
+            <p>Check security before app initialization and exit if compromised.</p>
+        </div>
+        
+        <h2 id="step5">🧪 Step 5: Testing</h2>
+        
+        <h3>Test Scenarios</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Platform</th>
+                    <th>Test Case</th>
+                    <th>Expected Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-android">Android</span></td>
+                    <td>Normal Device</td>
+                    <td>✅ App works normally</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-android">Android</span></td>
+                    <td>Rooted Device</td>
+                    <td>❌ App blocked</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-android">Android</span></td>
+                    <td>Emulator</td>
+                    <td>❌ App blocked</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-ios">iOS</span></td>
+                    <td>Normal Device</td>
+                    <td>✅ App works normally</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-ios">iOS</span></td>
+                    <td>Jailbroken Device</td>
+                    <td>❌ App blocked</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-ios">iOS</span></td>
+                    <td>Simulator</td>
+                    <td>❌ App blocked</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2 id="troubleshooting">🔧 Troubleshooting</h2>
+        
+        <h3>Common Issues</h3>
+        
+        <div class="warning">
+            <strong>Issue: Method Channel Not Working</strong>
+            <ul>
+                <li>Ensure channel names match exactly</li>
+                <li>Check that configureFlutterEngine is called</li>
+                <li>Verify platform-specific code locations</li>
+            </ul>
+        </div>
+        
+        <div class="warning">
+            <strong>Issue: Package Not Found</strong>
+            <p>Run: <code>flutter pub get</code></p>
+            <p>If package doesn't exist, remove those checks and use only native channels.</p>
+        </div>
+        
+        <h2 id="best-practices">✅ Best Practices</h2>
+        
+        <div class="success">
+            <h3>1. Fail-Safe Default</h3>
+            <p>Always assume compromised on error:</p>
+            <pre><code>catch (e) {
+  return true; // Fail-safe: block on error
+}</code></pre>
+        </div>
+        
+        <div class="success">
+            <h3>2. Multiple Checks</h3>
+            <ul>
+                <li>Package-based detection</li>
+                <li>Native method channels</li>
+                <li>File system checks</li>
+                <li>Process checks</li>
+            </ul>
+        </div>
+        
+        <div class="success">
+            <h3>3. Performance</h3>
+            <ul>
+                <li>Cache security check results</li>
+                <li>Run checks asynchronously</li>
+                <li>Don't block UI thread</li>
+            </ul>
+        </div>
+        
+        <div class="success">
+            <h3>4. User Experience</h3>
+            <ul>
+                <li>Show clear error messages</li>
+                <li>Provide retry option</li>
+                <li>Don't reveal detection methods</li>
+            </ul>
+        </div>
+        
+        <h2>📝 Summary</h2>
+        
+        <p>This integration provides:</p>
+        
+        <ul class="checklist">
+            <li><strong>Comprehensive Security Checks</strong> - Multiple detection methods</li>
+            <li><strong>Easy Integration</strong> - Simple widget wrapper</li>
+            <li><strong>Production Ready</strong> - Fail-safe defaults and error handling</li>
+            <li><strong>Cross-Platform</strong> - Android and iOS support</li>
+        </ul>
+        
+        <div class="note">
+            <strong>Important:</strong> Security is a continuous process. Regularly update your detection methods and stay informed about new bypass techniques. This implementation provides a strong foundation, but should be part of a comprehensive security strategy.
+        </div>
+        
+        <p style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #ecf0f1; text-align: center; color: #7f8c8d;">
+            For complete code examples, refer to the <code>SECURITY_INTEGRATION_GUIDE.md</code> file.
+        </p>
+    </div>
+</body>
+</html>

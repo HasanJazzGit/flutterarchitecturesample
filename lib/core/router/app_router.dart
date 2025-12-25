@@ -14,6 +14,7 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.path(AppRoutes.splash),
     observers: [GoRouterObserver()], // Router debug logging
+
     routes: [
       GoRoute(
         path: AppRoutes.path(AppRoutes.root),

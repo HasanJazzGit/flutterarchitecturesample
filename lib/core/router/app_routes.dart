@@ -38,6 +38,7 @@ class AppRoutes {
   // Example MVVM Architecture Route
   static const String exampleMvvm = 'example-mvvm';
 
+
   /// Get route path with leading "/"
   static String path(String route) {
     return route.isEmpty ? '/' : '/$route';

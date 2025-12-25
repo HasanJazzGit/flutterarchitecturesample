@@ -49,10 +49,20 @@ class AppPrefKeys {
   /// Whether onboarding has been completed
   static const String onboardingCompleted = 'onboarding_completed$prefVersion';
 
+  // ==================== Security Keys ====================
+
+  /// Whether encryption is enabled for SharedPreferences
+  static const String encryptionEnabled = 'encryption_enabled$prefVersion';
+
+  /// Encryption key (stored encrypted itself)
+  static const String encryptionKey = 'encryption_key$prefVersion';
+
+  /// Encryption IV (stored encrypted itself)
+  static const String encryptionIV = 'encryption_iv$prefVersion';
+
   // ==================== Add More Keys Here ====================
 
   // Example keys (uncomment and use as needed):
   // static const String userEmail = 'user_email$prefVersion';
   // static const String userProfileImage = 'user_profile_image$prefVersion';
-
 }

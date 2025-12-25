@@ -157,6 +157,35 @@ abstract class AppPref {
   /// Get string list with default
   List<String> getStringListOrDefault(String key, List<String> defaultValue);
 
+  // ==================== Encryption Management ====================
+
+  /// Enable or disable encryption for SharedPreferences
+  /// Returns true if encryption is supported and successfully enabled/disabled
+  /// Returns false if encryption is not supported (e.g., in AppPrefImpl)
+  Future<bool> setEncryptionEnabled(bool enabled);
+
+  /// Check if encryption is currently enabled
+  /// Returns false if encryption is not supported
+  bool isEncryptionEnabled();
+
+  /// Set encryption key (32 characters recommended for AES-256)
+  /// Returns true if key was set successfully
+  /// Note: Changing the key will require re-encrypting existing data
+  Future<bool> setEncryptionKey(String key);
+
+  /// Set encryption IV (16 characters recommended)
+  /// Returns true if IV was set successfully
+  /// Note: Changing the IV will require re-encrypting existing data
+  Future<bool> setEncryptionIV(String iv);
+
+  /// Initialize encryption with key and IV
+  /// Returns true if encryption was initialized successfully
+  Future<bool> initializeEncryption({
+    required String key,
+    required String iv,
+    bool enable = true,
+  });
+
   // ==================== Utility Methods ====================
 
   /// Remove a key

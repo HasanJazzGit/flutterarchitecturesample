@@ -5,6 +5,7 @@ import '../database/app_database.dart';
 import '../network/api_client.dart';
 import '../preference/app_pref.dart';
 import '../preference/app_pref_impl.dart';
+import '../preference/app_pref_encrypted_impl.dart';
 import '../utils/connectivity_service.dart';
 import '../../features/auth/auth_injection.dart';
 import '../../features/example_clean/example_clean_injection.dart';
@@ -17,6 +18,9 @@ final GetIt sl = GetIt.instance;
 
 /// Initialize dependency injection
 /// Call this in main() before runApp()
+///
+/// Note: Encryption can be enabled/configured through AppPref methods
+/// after initialization. Use AppPref.initializeEncryption() to set up encryption.
 Future<void> initDependencyInjection() async {
   // Initialize core dependencies
   await _initCore();
@@ -40,9 +44,10 @@ Future<void> _initCore() async {
   sl.registerLazySingleton<SharedPreferences>(() => sharedPref);
 
   // Register AppPref as singleton
-  // Best Practice: Register abstract interface, not concrete implementation
-  // Pass SharedPreferences instance to implementation
-  sl.registerLazySingleton<AppPref>(() => AppPrefImpl(sharedPref));
+  // Best Practice: Always use AppPrefEncryptedImpl to support encryption
+  // Encryption can be enabled/configured through AppPref methods
+  // If encryption is disabled, it works like regular SharedPreferences
+  sl.registerLazySingleton<AppPref>(() => AppPrefEncryptedImpl(sharedPref));
 
   // Register API Client as singleton for the whole app
   // Endpoints are now full URLs (from AppUrls), no baseUrl needed

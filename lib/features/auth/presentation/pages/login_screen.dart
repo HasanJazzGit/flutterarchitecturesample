@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttersampleachitecture/core/preference/app_pref.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/di/dependency_injection.dart';
 import '../../../../core/widgets/app_logo_widget.dart';
 import '../../../../core/widgets/widgets_export.dart';
 import '../cubit/auth_cubit.dart';
@@ -31,6 +33,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: implement initState
     super.initState();
     loginDataFeeder();
+   var aa= sl<AppPref>().getString("Test");
+   print(aa.toString());
   }
 
   @override

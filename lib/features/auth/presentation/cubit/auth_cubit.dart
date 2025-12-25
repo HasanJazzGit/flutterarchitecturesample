@@ -17,6 +17,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   /// Toggle remember me checkbox
   void toggleRememberMe(bool value) {
+
     emit(state.copyWith(rememberMe: value));
   }
 
@@ -29,6 +30,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     final params = LoginParams(email: email, password: password);
     final result = await loginUseCase.call(params);
+
 
     result.fold(
       // Left: Error

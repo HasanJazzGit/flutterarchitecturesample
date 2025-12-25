@@ -1,29 +1,160 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_pref.dart';
 import 'app_pref_keys.dart';
+import '../storage/encryption_service.dart';
 
-/// Concrete implementation of AppPref
-/// Uses SharedPreferences directly for preference operations
-class AppPrefImpl implements AppPref {
+/// Encrypted implementation of AppPref
+/// Automatically encrypts/decrypts sensitive data based on encryption flag
+/// Falls back to regular storage if encryption is disabled
+class AppPrefEncryptedImpl implements AppPref {
   final SharedPreferences _prefs;
+  late EncryptionService _encryptionService;
+  bool? _encryptionEnabledCache;
 
-  AppPrefImpl(this._prefs);
+  AppPrefEncryptedImpl(
+    this._prefs, {
+    EncryptionService? encryptionService,
+    String? encryptionKey,
+    String? encryptionIV,
+  }) {
+    // Load saved key/IV from preferences or use provided/default
+    final savedKey = _prefs.getString(AppPrefKeys.encryptionKey);
+    final savedIV = _prefs.getString(AppPrefKeys.encryptionIV);
+
+    _encryptionService =
+        encryptionService ??
+        EncryptionService(
+          encryptionKey: savedKey ?? encryptionKey,
+          iv: savedIV ?? encryptionIV,
+        );
+  }
 
   /// Get shared preferences instance
   SharedPreferences get _instance => _prefs;
 
+  /// Check if encryption is enabled
+  /// Caches the result for performance
+  bool _isEncryptionEnabled() {
+    _encryptionEnabledCache ??=
+        _instance.getBool(AppPrefKeys.encryptionEnabled) ?? false;
+    return _encryptionEnabledCache!;
+  }
+
+  /// Enable or disable encryption
+  @override
+  Future<bool> setEncryptionEnabled(bool enabled) async {
+    try {
+      _encryptionEnabledCache = enabled;
+      return await _instance.setBool(AppPrefKeys.encryptionEnabled, enabled);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Check if encryption is currently enabled
+  @override
+  bool isEncryptionEnabled() {
+    return _isEncryptionEnabled();
+  }
+
+  /// Set encryption key (32 characters recommended for AES-256)
+  @override
+  Future<bool> setEncryptionKey(String key) async {
+    try {
+      // Normalize key to 32 characters
+      final normalizedKey = _normalizeKey(key);
+      // Save key to preferences
+      final success = await _instance.setString(
+        AppPrefKeys.encryptionKey,
+        normalizedKey,
+      );
+      if (success) {
+        // Update encryption service with new key
+        _encryptionService.updateKeyAndIV(encryptionKey: normalizedKey);
+      }
+      return success;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Set encryption IV (16 characters recommended)
+  @override
+  Future<bool> setEncryptionIV(String iv) async {
+    try {
+      // Normalize IV to 16 characters
+      final normalizedIV = _normalizeIV(iv);
+      // Save IV to preferences
+      final success = await _instance.setString(
+        AppPrefKeys.encryptionIV,
+        normalizedIV,
+      );
+      if (success) {
+        // Update encryption service with new IV
+        _encryptionService.updateKeyAndIV(iv: normalizedIV);
+      }
+      return success;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Initialize encryption with key and IV
+  @override
+  Future<bool> initializeEncryption({
+    required String key,
+    required String iv,
+    bool enable = true,
+  }) async {
+    try {
+      // Set key and IV
+      final keySuccess = await setEncryptionKey(key);
+      final ivSuccess = await setEncryptionIV(iv);
+      final enableSuccess = await setEncryptionEnabled(enable);
+
+      return keySuccess && ivSuccess && enableSuccess;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Normalize key to exactly 32 characters
+  String _normalizeKey(String key) {
+    if (key.length == 32) return key;
+    if (key.length < 32) {
+      return key.padRight(32, '0');
+    }
+    return key.substring(0, 32);
+  }
+
+  /// Normalize IV to exactly 16 characters
+  String _normalizeIV(String iv) {
+    if (iv.length == 16) return iv;
+    if (iv.length < 16) {
+      return iv.padRight(16, '0');
+    }
+    return iv.substring(0, 16);
+  }
+
   // ==================== Private Helpers ====================
 
-  /// Safe string getter with default
+  /// Safe string getter with default and optional decryption
   String _getStringSafe(String key, String defaultValue) {
     try {
-      return _instance.getString(key) ?? defaultValue;
+      final value = _instance.getString(key);
+      if (value == null) return defaultValue;
+
+      // Decrypt if encryption is enabled
+      if (_isEncryptionEnabled()) {
+        return _encryptionService.decrypt(value);
+      }
+      return value;
     } catch (e) {
       return defaultValue;
     }
   }
 
-  /// Safe bool getter with default
+  /// Safe bool getter with default (booleans are not encrypted)
   bool _getBoolSafe(String key, bool defaultValue) {
     try {
       return _instance.getBool(key) ?? defaultValue;
@@ -32,7 +163,7 @@ class AppPrefImpl implements AppPref {
     }
   }
 
-  /// Safe int getter with default
+  /// Safe int getter with default (ints are not encrypted)
   int _getIntSafe(String key, int defaultValue) {
     try {
       return _instance.getInt(key) ?? defaultValue;
@@ -51,13 +182,29 @@ class AppPrefImpl implements AppPref {
     }
   }
 
+  /// Save string with optional encryption
+  Future<bool> _setStringWithEncryption(String key, String value) async {
+    try {
+      String valueToSave = value;
+
+      // Encrypt if encryption is enabled
+      if (_isEncryptionEnabled()) {
+        valueToSave = _encryptionService.encrypt(value);
+      }
+
+      return await _instance.setString(key, valueToSave);
+    } catch (e) {
+      return false;
+    }
+  }
+
   // ==================== Authentication ====================
 
   @override
   Future<bool> setToken(String token) async {
     if (token.isEmpty) return false;
     try {
-      final success = await _instance.setString(AppPrefKeys.token, token);
+      final success = await _setStringWithEncryption(AppPrefKeys.token, token);
       if (success) {
         await Future.wait([
           setLoginStatus(true),
@@ -85,7 +232,10 @@ class AppPrefImpl implements AppPref {
   Future<bool> setRefreshToken(String refreshToken) async {
     if (refreshToken.isEmpty) return false;
     try {
-      return await _instance.setString(AppPrefKeys.refreshToken, refreshToken);
+      return await _setStringWithEncryption(
+        AppPrefKeys.refreshToken,
+        refreshToken,
+      );
     } catch (e) {
       return false;
     }
@@ -100,7 +250,7 @@ class AppPrefImpl implements AppPref {
   Future<bool> setUserId(String userId) async {
     if (userId.isEmpty) return false;
     try {
-      return await _instance.setString(AppPrefKeys.userId, userId);
+      return await _setStringWithEncryption(AppPrefKeys.userId, userId);
     } catch (e) {
       return false;
     }
@@ -128,7 +278,7 @@ class AppPrefImpl implements AppPref {
   @override
   Future<bool> setLastLoginTime(DateTime dateTime) async {
     try {
-      return await _instance.setString(
+      return await _setStringWithEncryption(
         AppPrefKeys.lastLoginTime,
         dateTime.toIso8601String(),
       );
@@ -139,14 +289,15 @@ class AppPrefImpl implements AppPref {
 
   @override
   DateTime? getLastLoginTime() {
-    final timeString = _instance.getString(AppPrefKeys.lastLoginTime);
+    final timeString = _getStringSafe(AppPrefKeys.lastLoginTime, '');
+    if (timeString.isEmpty) return null;
     return _parseDateTime(timeString);
   }
 
   @override
   Future<bool> setSessionStartTime(DateTime dateTime) async {
     try {
-      return await _instance.setString(
+      return await _setStringWithEncryption(
         AppPrefKeys.sessionStartTime,
         dateTime.toIso8601String(),
       );
@@ -157,7 +308,8 @@ class AppPrefImpl implements AppPref {
 
   @override
   DateTime? getSessionStartTime() {
-    final timeString = _instance.getString(AppPrefKeys.sessionStartTime);
+    final timeString = _getStringSafe(AppPrefKeys.sessionStartTime, '');
+    if (timeString.isEmpty) return null;
     return _parseDateTime(timeString);
   }
 
@@ -229,7 +381,7 @@ class AppPrefImpl implements AppPref {
       return false;
     }
     try {
-      return await _instance.setString(AppPrefKeys.themeMode, themeMode);
+      return await _setStringWithEncryption(AppPrefKeys.themeMode, themeMode);
     } catch (e) {
       return false;
     }
@@ -246,7 +398,7 @@ class AppPrefImpl implements AppPref {
   Future<bool> setLocale(String localeCode) async {
     if (localeCode.isEmpty) return false;
     try {
-      return await _instance.setString(AppPrefKeys.locale, localeCode);
+      return await _setStringWithEncryption(AppPrefKeys.locale, localeCode);
     } catch (e) {
       return false;
     }
@@ -280,17 +432,20 @@ class AppPrefImpl implements AppPref {
 
   @override
   Future<bool> setString(String key, String value) async {
-    try {
-      return await _instance.setString(key, value);
-    } catch (e) {
-      return false;
-    }
+    return await _setStringWithEncryption(key, value);
   }
 
   @override
   String? getString(String key) {
     try {
-      return _instance.getString(key);
+      final value = _instance.getString(key);
+      if (value == null) return null;
+
+      // Decrypt if encryption is enabled
+      if (_isEncryptionEnabled()) {
+        return _encryptionService.decrypt(value);
+      }
+      return value;
     } catch (e) {
       return null;
     }
@@ -377,6 +532,13 @@ class AppPrefImpl implements AppPref {
   @override
   Future<bool> setStringList(String key, List<String> value) async {
     try {
+      // Encrypt each string in the list if encryption is enabled
+      if (_isEncryptionEnabled()) {
+        final encryptedList = value
+            .map((item) => _encryptionService.encrypt(item))
+            .toList();
+        return await _instance.setStringList(key, encryptedList);
+      }
       return await _instance.setStringList(key, value);
     } catch (e) {
       return false;
@@ -386,7 +548,14 @@ class AppPrefImpl implements AppPref {
   @override
   List<String>? getStringList(String key) {
     try {
-      return _instance.getStringList(key);
+      final list = _instance.getStringList(key);
+      if (list == null) return null;
+
+      // Decrypt each string in the list if encryption is enabled
+      if (_isEncryptionEnabled()) {
+        return list.map((item) => _encryptionService.decrypt(item)).toList();
+      }
+      return list;
     } catch (e) {
       return null;
     }
@@ -395,7 +564,8 @@ class AppPrefImpl implements AppPref {
   @override
   List<String> getStringListOrDefault(String key, List<String> defaultValue) {
     try {
-      return _instance.getStringList(key) ?? defaultValue;
+      final list = getStringList(key);
+      return list ?? defaultValue;
     } catch (e) {
       return defaultValue;
     }
@@ -437,42 +607,5 @@ class AppPrefImpl implements AppPref {
     } catch (e) {
       return <String>{};
     }
-  }
-
-  // ==================== Encryption Management ====================
-
-  /// Enable or disable encryption (not supported in AppPrefImpl)
-  @override
-  Future<bool> setEncryptionEnabled(bool enabled) async {
-    // Encryption not supported in non-encrypted implementation
-    return false;
-  }
-
-  /// Check if encryption is enabled (not supported in AppPrefImpl)
-  @override
-  bool isEncryptionEnabled() {
-    return false;
-  }
-
-  /// Set encryption key (not supported in AppPrefImpl)
-  @override
-  Future<bool> setEncryptionKey(String key) async {
-    return false;
-  }
-
-  /// Set encryption IV (not supported in AppPrefImpl)
-  @override
-  Future<bool> setEncryptionIV(String iv) async {
-    return false;
-  }
-
-  /// Initialize encryption (not supported in AppPrefImpl)
-  @override
-  Future<bool> initializeEncryption({
-    required String key,
-    required String iv,
-    bool enable = true,
-  }) async {
-    return false;
   }
 }

@@ -30,4 +30,5 @@ void initAuthInjector() {
   // Lazy Singleton: Same instance shared across all auth screens (login, OTP, password recovery, logout)
   // This ensures state persists between navigation (e.g., email from login available in OTP screen)
   sl.registerLazySingleton<AuthCubit>(() => AuthCubit(sl<LoginUseCase>()));
+
 }
