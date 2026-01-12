@@ -23,6 +23,7 @@ class LoginParams extends Equatable {
 
 
 
+
   const LoginParams({required this.email, required this.password});
 
   @override

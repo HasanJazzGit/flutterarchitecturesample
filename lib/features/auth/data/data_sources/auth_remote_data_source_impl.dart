@@ -57,26 +57,4 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  @override
-  Future<void> logout() async {
-    try {
-      final response = await apiClient.post(AppUrls.logout);
-
-      // Check for success field if present
-      if (response.containsKey('success')) {
-        final success = response['success'] as bool?;
-        if (success == false) {
-          final message = response['message'] as String? ?? 'Logout failed';
-          throw Exception(message);
-        }
-      }
-    } on ApiException catch (e) {
-      throw Exception(e.message);
-    } catch (e) {
-      if (e is Exception) {
-        rethrow;
-      }
-      throw Exception('Network error: ${e.toString()}');
-    }
-  }
 }

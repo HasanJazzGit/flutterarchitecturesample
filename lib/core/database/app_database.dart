@@ -5,11 +5,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 // Import feature-specific tables
+
+import '../../features/app/data/database/daos/app_dao.dart';
+import '../../features/app/data/database/tables/app_table.dart';
 import '../../features/products/data/database/tables/products_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Products])
+@DriftDatabase(tables: [AppTable,Products],daos: [AppDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

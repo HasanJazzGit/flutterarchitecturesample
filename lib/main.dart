@@ -15,11 +15,11 @@ void main() async {
   // Initialize dependency injection (includes AppPref initialization)
   // Encryption can be enabled/configured through AppPref methods after initialization
   await initDependencyInjection();
-
-  runApp(
-    kDebugMode
-        ? FlutterSampleApp()
-        : // Wrap app with SecurityGate to block compromised devices
-          SecurityGate(child: const FlutterSampleApp()),
-  );
+  runApp(FlutterSampleApp());
+  // runApp(
+  //   kDebugMode
+  //       ? FlutterSampleApp()
+  //       : // Wrap app with SecurityGate to block compromised devices
+  //         SecurityGate(child: const FlutterSampleApp()),
+  // );
 }

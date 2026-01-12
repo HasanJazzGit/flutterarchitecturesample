@@ -33,38 +33,4 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  @override
-  Future<Either<ErrorMsg, void>> logout() async {
-    try {
-      // Call API logout if needed
-      await remoteDataSource.logout();
-
-      // Clear local authentication data
-      await _appPref.logout();
-
-      return const Right(null);
-    } on ApiException catch (e) {
-      // Even if API call fails, clear local data
-      await _appPref.logout();
-      return Left(e.message);
-    } catch (e) {
-      // Even if error occurs, clear local data
-      await _appPref.logout();
-      return Left(e.toString());
-    }
-  }
-
-  @override
-  Future<Either<ErrorMsg, bool>> isAuthenticated() async {
-    try {
-      // Check authentication status from shared preferences
-      // Best Practice: Check both token and session validity
-      final isAuth = _appPref.isAuthenticated();
-      final isSessionValid = _appPref.isSessionValid();
-
-      return Right(isAuth && isSessionValid);
-    } catch (e) {
-      return Left(e.toString());
-    }
-  }
 }

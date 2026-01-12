@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app__theme_colors.dart';
+import '../theme/app_theme_colors.dart';
 
 /// Extension on BuildContext for easy access to theme colors
 extension AppColorsExtension on BuildContext {

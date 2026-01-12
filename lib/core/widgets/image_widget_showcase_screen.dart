@@ -1,4 +1,4 @@
-import 'package:fluttersampleachitecture/core/constants/app_color.dart';
+import 'package:fluttersampleachitecture/core/constants/app_colors.dart';
 
 import 'app_image_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ class ImageWidgetShowcaseScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AppImageWidget Showcase'),
-        backgroundColor: AppColor.customColorName,
+        backgroundColor: AppColors.customColorName,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -139,7 +139,7 @@ class ImageWidgetShowcaseScreen extends StatelessWidget {
                   'Basic Icon',
                   AppImageWidget(
                     icon: Icons.home,
-                    iconColor: AppColor.customColorName,
+                    iconColor: AppColors.customColorName,
                     iconSize: 48,
                     width: 80,
                     height: 80,
@@ -415,7 +415,7 @@ class ImageWidgetShowcaseScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: AppColor.customColorName,
+              color: AppColors.customColorName,
             ),
           ),
           const SizedBox(height: 12),

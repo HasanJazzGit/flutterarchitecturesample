@@ -17,11 +17,11 @@ enum AppFlavor {
   String get apiBaseUrl {
     switch (this) {
       case AppFlavor.development:
-        return 'https://dev-api.example.com/api';
+        return 'https://dev-api.example.development.com/api';
       case AppFlavor.staging:
-        return 'https://staging-api.example.com/api';
+        return 'https://staging-api.example.staging.com/api';
       case AppFlavor.production:
-        return 'https://api.example.com/api';
+        return 'https://api.example.productioncom/api';
     }
   }
 

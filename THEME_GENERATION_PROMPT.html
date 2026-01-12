@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Generation Prompt Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 20px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-left: 5px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #764ba2;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .prompt-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .prompt-box::before {
+            content: "PROMPT TEMPLATE";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #888;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+        
+        .color-input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .color-picker {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .color-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #fff;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .example-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .checklist-item {
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .checklist-item::before {
+            content: "☐";
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        
+        .back-to-top:hover {
+            transform: scale(1.1);
+        }
+        
+        .section {
+            scroll-margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Theme Generation Prompt</h1>
+        <p class="subtitle">Template for Generating Flutter Theme Classes from Colors</p>
+        
+        <div class="info-box">
+            <strong>How to Use:</strong> Copy the prompt template below, fill in your colors, and provide it to an AI assistant to generate your theme code automatically.
+        </div>
+        
+        <section id="template" class="section">
+            <h2>📋 Prompt Template</h2>
+            
+            <div class="prompt-box" id="promptTemplate">
+I need you to create a Flutter theme system for my app. Please generate the following files based on the colors I provide:
+
+1. AppThemeColors class (ThemeExtension) with all color properties
+2. AppTheme class with light and dark theme configurations
+3. Material 3 compatible theme setup
+
+Here are my app colors:
+
+### Light Theme Colors:
+- Primary: [YOUR_PRIMARY_COLOR] (e.g., #6750A4)
+- Secondary: [YOUR_SECONDARY_COLOR] (e.g., #625B71)
+- Tertiary: [YOUR_TERTIARY_COLOR] (e.g., #7D5260)
+- Error: [YOUR_ERROR_COLOR] (e.g., #BA1A1A)
+- Surface: [YOUR_SURFACE_COLOR] (e.g., #FFFBFE)
+- Background: [YOUR_BACKGROUND_COLOR] (e.g., #FFFBFE)
+- OnPrimary: [YOUR_ON_PRIMARY_COLOR] (e.g., #FFFFFF)
+- OnSecondary: [YOUR_ON_SECONDARY_COLOR] (e.g., #FFFFFF)
+- OnTertiary: [YOUR_ON_TERTIARY_COLOR] (e.g., #FFFFFF)
+- OnError: [YOUR_ON_ERROR_COLOR] (e.g., #FFFFFF)
+- OnSurface: [YOUR_ON_SURFACE_COLOR] (e.g., #1C1B1F)
+- OnBackground: [YOUR_ON_BACKGROUND_COLOR] (e.g., #1C1B1F)
+
+### Custom Colors (Optional):
+- Success: [YOUR_SUCCESS_COLOR] (e.g., #4CAF50)
+- Warning: [YOUR_WARNING_COLOR] (e.g., #FF9800)
+- Info: [YOUR_INFO_COLOR] (e.g., #2196F3)
+- Divider: [YOUR_DIVIDER_COLOR] (e.g., #E0E0E0)
+- Border: [YOUR_BORDER_COLOR] (e.g., #BDBDBD)
+- Disabled: [YOUR_DISABLED_COLOR] (e.g., #9E9E9E)
+- Text Primary: [YOUR_TEXT_PRIMARY_COLOR] (e.g., #212121)
+- Text Secondary: [YOUR_TEXT_SECONDARY_COLOR] (e.g., #757575)
+- Card Background: [YOUR_CARD_BACKGROUND_COLOR] (e.g., #FFFFFF)
+- Scaffold Background: [YOUR_SCAFFOLD_BACKGROUND_COLOR] (e.g., #F5F5F5)
+
+### Dark Theme Colors:
+- Primary: [YOUR_DARK_PRIMARY_COLOR] (e.g., #D0BCFF)
+- Secondary: [YOUR_DARK_SECONDARY_COLOR] (e.g., #CCC2DC)
+- Tertiary: [YOUR_DARK_TERTIARY_COLOR] (e.g., #EFB8C8)
+- Error: [YOUR_DARK_ERROR_COLOR] (e.g., #FFB4AB)
+- Surface: [YOUR_DARK_SURFACE_COLOR] (e.g., #1C1B1F)
+- Background: [YOUR_DARK_BACKGROUND_COLOR] (e.g., #1C1B1F)
+- OnPrimary: [YOUR_DARK_ON_PRIMARY_COLOR] (e.g., #381E72)
+- OnSecondary: [YOUR_DARK_ON_SECONDARY_COLOR] (e.g., #332D41)
+- OnTertiary: [YOUR_DARK_ON_TERTIARY_COLOR] (e.g., #492532)
+- OnError: [YOUR_DARK_ON_ERROR_COLOR] (e.g., #690005)
+- OnSurface: [YOUR_DARK_ON_SURFACE_COLOR] (e.g., #E6E1E5)
+- OnBackground: [YOUR_DARK_ON_BACKGROUND_COLOR] (e.g., #E6E1E5)
+
+### Additional Requirements:
+- Use Material 3 design system
+- Include copyWith and lerp methods for ThemeExtension
+- Generate both light and dark themes
+- Include proper text themes
+- Include component themes (buttons, cards, inputs)
+- Use Color(0xFF...) format for all colors
+- Make all colors const where possible
+
+Please generate:
+1. app_theme_colors.dart - ThemeExtension class with all colors
+2. app_theme.dart - ThemeData configuration for light and dark themes
+
+The code should follow Flutter best practices and Material 3 guidelines.
+            </div>
+            
+            <button class="copy-btn" onclick="copyPrompt()">📋 Copy Prompt Template</button>
+        </section>
+        
+        <section id="example" class="section">
+            <h2>📝 Example: Filled Prompt</h2>
+            
+            <div class="example-box">
+                <h3>Example with Real Colors</h3>
+                <div class="prompt-box">
+I need you to create a Flutter theme system for my app. Please generate the following files based on the colors I provide:
+
+### Light Theme Colors:
+- Primary: #2196F3 (Blue)
+- Secondary: #FF9800 (Orange)
+- Tertiary: #4CAF50 (Green)
+- Error: #F44336 (Red)
+- Surface: #FFFFFF (White)
+- Background: #F5F5F5 (Light Gray)
+- OnPrimary: #FFFFFF (White)
+- OnSecondary: #FFFFFF (White)
+- OnTertiary: #FFFFFF (White)
+- OnError: #FFFFFF (White)
+- OnSurface: #212121 (Dark Gray)
+- OnBackground: #212121 (Dark Gray)
+
+### Custom Colors:
+- Success: #4CAF50 (Green)
+- Warning: #FF9800 (Orange)
+- Info: #2196F3 (Blue)
+- Divider: #E0E0E0 (Light Gray)
+- Border: #BDBDBD (Gray)
+- Disabled: #9E9E9E (Gray)
+- Text Primary: #212121 (Dark Gray)
+- Text Secondary: #757575 (Medium Gray)
+- Card Background: #FFFFFF (White)
+- Scaffold Background: #F5F5F5 (Light Gray)
+
+### Dark Theme Colors:
+- Primary: #64B5F6 (Light Blue)
+- Secondary: #FFB74D (Light Orange)
+- Tertiary: #81C784 (Light Green)
+- Error: #E57373 (Light Red)
+- Surface: #121212 (Dark)
+- Background: #000000 (Black)
+- OnPrimary: #000000 (Black)
+- OnSecondary: #000000 (Black)
+- OnTertiary: #000000 (Black)
+- OnError: #000000 (Black)
+- OnSurface: #FFFFFF (White)
+- OnBackground: #FFFFFF (White)
+
+[Include all requirements from template]
+                </div>
+            </div>
+        </section>
+        
+        <section id="quick" class="section">
+            <h2>⚡ Quick Start Prompt</h2>
+            
+            <div class="warning-box">
+                <strong>Minimal Prompt:</strong> If you only have primary colors, use this simplified version:
+            </div>
+            
+            <div class="prompt-box">
+Create a Flutter Material 3 theme with:
+- Primary color: #2196F3
+- Secondary color: #FF9800
+- Error color: #F44336
+
+Generate light and dark themes automatically based on Material 3 color system.
+Include AppThemeColors (ThemeExtension) and AppTheme classes.
+            </div>
+        </section>
+        
+        <section id="format" class="section">
+            <h2>🎨 Color Format Reference</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Format</th>
+                        <th>Example</th>
+                        <th>Flutter Format</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Hex with #</td>
+                        <td>#2196F3</td>
+                        <td>Color(0xFF2196F3)</td>
+                    </tr>
+                    <tr>
+                        <td>Hex without #</td>
+                        <td>2196F3</td>
+                        <td>Color(0xFF2196F3)</td>
+                    </tr>
+                    <tr>
+                        <td>RGB</td>
+                        <td>rgb(33, 150, 243)</td>
+                        <td>Color(0xFF2196F3)</td>
+                    </tr>
+                    <tr>
+                        <td>Flutter Color</td>
+                        <td>Color(0xFF2196F3)</td>
+                        <td>Color(0xFF2196F3)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section id="checklist" class="section">
+            <h2>✅ Generated Code Checklist</h2>
+            
+            <div class="checklist">
+                <div class="checklist-item">AppThemeColors extends ThemeExtension</div>
+                <div class="checklist-item">Has copyWith method</div>
+                <div class="checklist-item">Has lerp method</div>
+                <div class="checklist-item">Light theme colors defined</div>
+                <div class="checklist-item">Dark theme colors defined</div>
+                <div class="checklist-item">AppTheme.lightTheme returns ThemeData</div>
+                <div class="checklist-item">AppTheme.darkTheme returns ThemeData</div>
+                <div class="checklist-item">Material 3 enabled (useMaterial3: true)</div>
+                <div class="checklist-item">ColorScheme.fromSeed used</div>
+                <div class="checklist-item">Text themes included</div>
+                <div class="checklist-item">Component themes included (buttons, cards, inputs)</div>
+                <div class="checklist-item">All colors use Color(0xFF...) format</div>
+            </div>
+        </section>
+        
+        <section id="integration" class="section">
+            <h2>🔧 Integration Steps</h2>
+            
+            <div class="success-box">
+                <ol style="padding-left: 20px;">
+                    <li><strong>Generate code</strong> using the prompt</li>
+                    <li><strong>Create files</strong> in <code>lib/core/theme/</code></li>
+                    <li><strong>Update MaterialApp</strong>:
+                        <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+MaterialApp(
+  theme: AppTheme.lightTheme,
+  darkTheme: AppTheme.darkTheme,
+  themeMode: ThemeMode.system,
+)</pre>
+                    </li>
+                    <li><strong>Test</strong> light and dark themes</li>
+                    <li><strong>Customize</strong> as needed</li>
+                </ol>
+            </div>
+        </section>
+        
+        <section id="tips" class="section">
+            <h2>💡 Tips</h2>
+            
+            <div class="info-box">
+                <ul style="list-style: none; padding-left: 0;">
+                    <li>✅ <strong>Start with Material 3 colors:</strong> Use Material 3 color palette as base</li>
+                    <li>✅ <strong>Ensure contrast:</strong> Make sure text is readable on backgrounds</li>
+                    <li>✅ <strong>Test both themes:</strong> Always test light and dark modes</li>
+                    <li>✅ <strong>Use semantic colors:</strong> Use success, warning, error for consistency</li>
+                    <li>✅ <strong>Keep it simple:</strong> Start with essential colors, add more as needed</li>
+                </ul>
+            </div>
+        </section>
+        
+        <div style="text-align: center; margin-top: 40px; color: #666; font-size: 0.9em;">
+            <p>💡 Copy the prompt template above and fill in your colors</p>
+            <p style="margin-top: 10px;">📖 For detailed guide, see <strong>THEME_GENERATION_PROMPT.md</strong></p>
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">↑</a>
+    
+    <script>
+        function copyPrompt() {
+            const promptText = document.getElementById('promptTemplate').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert('Prompt template copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+    </script>
+</body>
+</html>

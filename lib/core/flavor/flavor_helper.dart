@@ -39,6 +39,7 @@ class FlavorHelper {
     StackTrace? stackTrace,
   ]) {
     if (shouldLog) {
+
       // ignore: avoid_print
       print('[${flavorName.toUpperCase()}] ERROR: $message');
       if (error != null) {

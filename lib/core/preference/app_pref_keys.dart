@@ -1,68 +1,20 @@
-/// Storage keys for AppPref
-/// All preference keys should be defined here
-///
-/// Best Practice:
-/// - Use descriptive, namespaced keys to avoid conflicts
-/// - Group related keys together
-/// - Document the purpose of each key
-/// - Never hardcode keys in other files - always use this class
+import 'package:fluttersampleachitecture/core/di/dependency_injection.dart';
+import 'package:fluttersampleachitecture/core/storage/encryption_service.dart';
+
 class AppPrefKeys {
-  AppPrefKeys._(); // Private constructor to prevent instantiation
+  AppPrefKeys._();
 
-  // ==================== Version Keys ====================
+  static final _encryption = sl<EncryptionService>();
+  static String get _prefVersion => _encryption.obfuscateKey("app_pref_v1");
 
-  /// Preferences version number
-  static const String prefVersion = 'pref_version_1';
-
-  // ==================== Authentication Keys ====================
-
-  /// Authentication token (JWT)
-  static const String token = 'auth_token$prefVersion';
-
-  /// Refresh token for token renewal
-  static const String refreshToken = 'refresh_token$prefVersion';
-
-  /// User ID
-  static const String userId = 'user_id$prefVersion';
-
-  /// Login status (boolean)
-  static const String loginStatus = 'login_status$prefVersion';
-
-  /// Last login timestamp (ISO 8601 string)
-  static const String lastLoginTime = 'last_login_time$prefVersion';
-
-  /// Session start timestamp (ISO 8601 string)
-  static const String sessionStartTime = 'session_start_time$prefVersion';
-
-  // ==================== Theme Keys ====================
-
-  /// Theme mode: 'light', 'dark', or 'system'
-  static const String themeMode = 'theme_mode$prefVersion';
-
-  // ==================== Localization Keys ====================
-
-  /// App locale (language code)
-  static const String locale = 'app_locale$prefVersion';
-
-  // ==================== Onboarding Keys ====================
-
-  /// Whether onboarding has been completed
-  static const String onboardingCompleted = 'onboarding_completed$prefVersion';
-
-  // ==================== Security Keys ====================
-
-  /// Whether encryption is enabled for SharedPreferences
-  static const String encryptionEnabled = 'encryption_enabled$prefVersion';
-
-  /// Encryption key (stored encrypted itself)
-  static const String encryptionKey = 'encryption_key$prefVersion';
-
-  /// Encryption IV (stored encrypted itself)
-  static const String encryptionIV = 'encryption_iv$prefVersion';
-
-  // ==================== Add More Keys Here ====================
-
-  // Example keys (uncomment and use as needed):
-  // static const String userEmail = 'user_email$prefVersion';
-  // static const String userProfileImage = 'user_profile_image$prefVersion';
+  static String get token => _encryption.obfuscateKey('auth_token$_prefVersion');
+  static String get refreshToken => _encryption.obfuscateKey('refresh_token$_prefVersion');
+  static String get userId => _encryption.obfuscateKey('user_id$_prefVersion');
+  static String get loginStatus => _encryption.obfuscateKey('login_status$_prefVersion');
+  static String get themeMode => _encryption.obfuscateKey('theme_mode$_prefVersion');
+  static String get locale => _encryption.obfuscateKey('app_locale$_prefVersion');
+  static String get onboardingCompleted => _encryption.obfuscateKey('onboarding_completed$_prefVersion');
+  static String get encryptionEnabled => _encryption.obfuscateKey('encryption_enabled$_prefVersion');
+  static String get encryptionKey => _encryption.obfuscateKey('encryption_key$_prefVersion');
+  static String get encryptionIV => _encryption.obfuscateKey('encryption_iv$_prefVersion');
 }

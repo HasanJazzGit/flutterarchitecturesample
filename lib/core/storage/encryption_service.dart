@@ -1,107 +1,172 @@
 import 'dart:convert';
-import 'package:encrypt/encrypt.dart';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' hide Key;
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:developer' as dev;
 
-/// Service for encrypting and decrypting data
-/// Uses AES encryption with a secure key
+import '../security/native_security.dart';
+
+
 class EncryptionService {
-  static const String _defaultKey = String.fromEnvironment('Pref_Key'); // 32 chars for AES-256
-  static const String _defaultIV = '1234567890123456'; // 16 chars for IV
+  static final EncryptionService _instance = EncryptionService._internal();
+  factory EncryptionService() => _instance;
+  EncryptionService._internal();
 
-  late Encrypter _encrypter;
-  late IV _iv;
+  // Constants
+  static const String _secretKeyName = 'app_random_secret_key';
 
-  /// Initialize encryption service with optional key and IV
-  /// If not provided, uses default values (not recommended for production)
-  EncryptionService({String? encryptionKey, String? iv}) {
-    // Use provided key or default (pad/truncate to 32 chars)
-    final key = _normalizeKey(encryptionKey ?? _defaultKey);
-    final keyObj = Key.fromBase64(base64Encode(utf8.encode(key)));
+  // Dependencies
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-    // Use provided IV or default (pad/truncate to 16 chars)
-    final ivString = _normalizeIV(iv ?? _defaultIV);
-    _iv = IV.fromBase64(base64Encode(utf8.encode(ivString)));
+  late String _nativeKey; // Key from method channel
+  late String _randomSecret; // Random key stored in secure storage
+  late String _combinedKey; // Combined key
+  late String _normalizedKey; // Normalized key
 
-    _encrypter = Encrypter(AES(keyObj));
-  }
 
-  /// Update encryption key and IV
-  /// This will reinitialize the encrypter with new values
-  void updateKeyAndIV({String? encryptionKey, String? iv}) {
-    // Use provided key or keep current
-    final key = encryptionKey != null
-        ? _normalizeKey(encryptionKey)
-        : _normalizeKey(_defaultKey);
-    final keyObj = Key.fromBase64(base64Encode(utf8.encode(key)));
+  bool _initialized = false;
 
-    // Use provided IV or keep current
-    final ivString = iv != null ? _normalizeIV(iv) : _normalizeIV(_defaultIV);
-    _iv = IV.fromBase64(base64Encode(utf8.encode(ivString)));
-
-    _encrypter = Encrypter(AES(keyObj));
-  }
-
-  /// Normalize key to exactly 32 characters
-  String _normalizeKey(String key) {
-    if (key.length == 32) return key;
-    if (key.length < 32) {
-      return key.padRight(32, '0');
+  /// Initialize encryption keys and setup
+  Future<void> initialize() async {
+    if (_initialized) {
+      if (kDebugMode) print('[EncryptionService] Already initialized — skipping.');
+      return;
     }
-    return key.substring(0, 32);
-  }
 
-  /// Normalize IV to exactly 16 characters
-  String _normalizeIV(String iv) {
-    if (iv.length == 16) return iv;
-    if (iv.length < 16) {
-      return iv.padRight(16, '0');
+    if (kDebugMode) print('[EncryptionService] Initializing encryption service...');
+
+    // 1️⃣ Get native key from platform side
+    _nativeKey = await _getNativeKey();
+    if (kDebugMode) print('[EncryptionService] Native key fetched successfully.');
+
+    // 2️⃣ Retrieve or create random secret
+    String? storedSecret = await _secureStorage.read(key: _secretKeyName);
+    if (storedSecret == null) {
+      storedSecret = _generateRandomSecret();
+      await _secureStorage.write(key: _secretKeyName, value: storedSecret);
+      if (kDebugMode) print('[EncryptionService] Random secret key generated and stored.');
+    } else {
+      if (kDebugMode) print('[EncryptionService] Random secret key loaded from secure storage.');
     }
-    return iv.substring(0, 16);
+    _randomSecret = storedSecret;
+
+    // 3️⃣ Combine both keys
+    _combinedKey = _combineKeys(_nativeKey, _randomSecret);
+     _normalizedKey = _normalizeKey(_combinedKey);
+
+    _initialized = true;
+    if (kDebugMode) {
+      print('[EncryptionService] Initialization complete ✅');
+      print('[EncryptionService] CombinedKey (len=${_normalizedKey.length}): $_normalizedKey');
+    }
   }
 
-  /// Encrypt a string value
-  /// Returns base64 encoded encrypted string
-  String encrypt(String plainText) {
+  /// Fetch native key via platform channel
+  Future<String> _getNativeKey() async {
     try {
-      if (plainText.isEmpty) return plainText;
-      final encrypted = _encrypter.encrypt(plainText, iv: _iv);
-      return encrypted.base64;
+      if (kDebugMode) print('[EncryptionService] Requesting native key from platform...');
+      final key = await NativeSecurity.getSecretKey();
+      if (key.isEmpty) throw Exception('Native key not found');
+      return key;
     } catch (e) {
-      if (kDebugMode) {
-        print('[EncryptionService] Encryption error: $e');
-      }
-      // Return original if encryption fails
-      return plainText;
+      if (kDebugMode) print('[EncryptionService] ❌ Failed to get native key: $e');
+      throw Exception('Unable to retrieve native encryption key');
     }
   }
 
-  /// Decrypt an encrypted string
-  /// Expects base64 encoded encrypted string
+  /// Generate a secure random 32-byte secret key
+  String _generateRandomSecret() {
+    final random = Random.secure();
+    final values = List<int>.generate(32, (i) => random.nextInt(256));
+    final secret = base64Encode(values);
+    if (kDebugMode) print('[EncryptionService] Generated new random secret (Base64 length: ${secret.length})');
+    return secret;
+  }
+
+  /// Combine native and random secrets into a strong key
+  String _combineKeys(String nativeKey, String randomSecret) {
+    final combined = base64.encode(utf8.encode('$nativeKey$randomSecret'));
+    if (kDebugMode) print('[EncryptionService] Keys combined. Combined Base64 length: ${combined.length}');
+    return combined.substring(0, 32);
+  }
+
+  /// Normalize to 32 characters (AES-256 key)
+  String _normalizeKey(String key) {
+    final normalized = key.length >= 32 ? key.substring(0, 32) : key.padRight(32, '0');
+    if (kDebugMode) print('[EncryptionService] Normalized key length: ${normalized.length}');
+    return normalized;
+  }
+
+
+  String encrypt(String plainText) {
+    final key = utf8.encode(_normalizedKey);
+    final bytes = utf8.encode(plainText);
+
+    final hmac = Hmac(sha256, key);
+    final digest = hmac.convert(bytes);
+
+    final random = Random.secure();
+    final iv = List<int>.generate(16, (i) => random.nextInt(256));
+    final encrypted = _xorEncrypt(bytes, iv);
+
+    final base64Payload = base64Encode([...iv, ...encrypted]);
+    final result = '$base64Payload:$digest';
+
+    // Log encrypted text and lengths
+    dev.log('Encrypted Text: $result', name: 'EncryptionService');
+    dev.log('Encrypted Text Length: ${result.length}', name: 'EncryptionService');
+    dev.log('Base64 Payload: $base64Payload', name: 'EncryptionService');
+    dev.log('Base64 Payload Length: ${base64Payload.length}', name: 'EncryptionService');
+
+    return result;
+  }
+
   String decrypt(String encryptedText) {
     try {
-      if (encryptedText.isEmpty) return encryptedText;
-      final encrypted = Encrypted.fromBase64(encryptedText);
-      return _encrypter.decrypt(encrypted, iv: _iv);
+      final parts = encryptedText.split(':');
+      if (parts.length != 2) return '';
+
+      final data = base64Decode(parts[0]);
+      final storedDigest = parts[1];
+
+      final iv = data.sublist(0, 16);
+      final encrypted = data.sublist(16);
+
+      final decrypted = _xorDecrypt(encrypted, iv);
+
+      final key = utf8.encode(_normalizedKey);
+      final hmac = Hmac(sha256, key);
+      final calculatedDigest = hmac.convert(decrypted).toString();
+
+      if (calculatedDigest != storedDigest) return '';
+
+      final result = utf8.decode(decrypted);
+
+      // Log decrypted text and its length
+      dev.log('Decrypted Text: $result', name: 'EncryptionService');
+      dev.log('Decrypted Text Length: ${result.length}', name: 'EncryptionService');
+
+      return result;
     } catch (e) {
-      if (kDebugMode) {
-        print('[EncryptionService] Decryption error: $e');
-      }
-      // Return original if decryption fails (might be unencrypted data)
-      return encryptedText;
+      return '';
     }
   }
-
-  /// Check if a string is encrypted (base64 format check)
-  bool isEncrypted(String value) {
-    try {
-      if (value.isEmpty) return false;
-      // Try to decode as base64
-      base64Decode(value);
-      // If it decodes successfully, assume it might be encrypted
-      // This is a simple check - encrypted values are typically base64
-      return value.length > 16; // Encrypted values are usually longer
-    } catch (e) {
-      return false;
+// XOR helpers
+  List<int> _xorEncrypt(List<int> data, List<int> key) {
+    final result = List<int>.filled(data.length, 0);
+    for (var i = 0; i < data.length; i++) {
+      result[i] = data[i] ^ key[i % key.length];
     }
+    return result;
+  }
+
+  List<int> _xorDecrypt(List<int> data, List<int> key) => _xorEncrypt(data, key);
+  String obfuscateKey(String keyName) {
+    final input = keyName + _nativeKey+_randomSecret;
+    final bytes = utf8.encode(input);
+    final hash = sha256.convert(bytes);
+    return base64Encode(hash.bytes).substring(0, 20).replaceAll(RegExp(r'[+/=]'), '_');
   }
 }

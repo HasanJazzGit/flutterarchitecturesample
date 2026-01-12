@@ -47,8 +47,8 @@ class _AppPasswordFieldState extends State<AppPasswordField> {
 
     return AppTextField(
       controller: widget.controller,
-      labelText: widget.labelText ?? AppStrings.password,
-      hintText: widget.hintText ?? AppStrings.enterPassword,
+      labelText: widget.labelText ?? "Password",
+      hintText: widget.hintText ?? "Enter Password",
       prefixIcon: Icons.lock_outline,
       suffixIcon: widget.showVisibilityToggle
           ? IconButton(

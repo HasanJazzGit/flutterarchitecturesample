@@ -34,8 +34,8 @@ class AppEmailField extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppTextField(
       controller: controller,
-      labelText: labelText ?? AppStrings.email,
-      hintText: hintText ?? AppStrings.enterEmail,
+      labelText: labelText ?? "Email",
+      hintText: hintText ?? "Enter Email",
       prefixIcon: Icons.email_outlined,
       keyboardType: TextInputType.emailAddress,
       textInputAction: textInputAction ?? TextInputAction.next,

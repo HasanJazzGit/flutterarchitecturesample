@@ -1,478 +1,169 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import '../storage/encryption_service.dart';
 import 'app_pref.dart';
 import 'app_pref_keys.dart';
 
-/// Concrete implementation of AppPref
-/// Uses SharedPreferences directly for preference operations
+/// A secure App Preferences implementation using AES EncryptionService.
+/// Automatically encrypts/decrypts values before saving to SharedPreferences.
 class AppPrefImpl implements AppPref {
   final SharedPreferences _prefs;
+  final EncryptionService _encryptionService;
 
-  AppPrefImpl(this._prefs);
+  AppPrefImpl(
+      this._prefs, {
+        EncryptionService? encryptionService,
+      }) : _encryptionService = encryptionService ?? EncryptionService();
 
-  /// Get shared preferences instance
+
+
   SharedPreferences get _instance => _prefs;
 
-  // ==================== Private Helpers ====================
+  // ==================== Core Encryption Helpers ====================
 
-  /// Safe string getter with default
-  String _getStringSafe(String key, String defaultValue) {
+  Future<bool> _setEncrypted(String key, String value) async {
     try {
-      return _instance.getString(key) ?? defaultValue;
-    } catch (e) {
-      return defaultValue;
+      final encryptedValue = _encryptionService.encrypt(value);
+      return await _instance.setString(key, encryptedValue);
+    } catch (_) {
+      return false;
     }
   }
 
-  /// Safe bool getter with default
-  bool _getBoolSafe(String key, bool defaultValue) {
+  String _getDecrypted(String key, [String defaultValue = '']) {
     try {
-      return _instance.getBool(key) ?? defaultValue;
-    } catch (e) {
+      final value = _instance.getString(key);
+      if (value == null || value.isEmpty) return defaultValue;
+      return _encryptionService.decrypt(value);
+    } catch (_) {
       return defaultValue;
-    }
-  }
-
-  /// Safe int getter with default
-  int _getIntSafe(String key, int defaultValue) {
-    try {
-      return _instance.getInt(key) ?? defaultValue;
-    } catch (e) {
-      return defaultValue;
-    }
-  }
-
-  /// Safe DateTime parser
-  DateTime? _parseDateTime(String? timeString) {
-    if (timeString == null || timeString.isEmpty) return null;
-    try {
-      return DateTime.tryParse(timeString);
-    } catch (e) {
-      return null;
     }
   }
 
   // ==================== Authentication ====================
 
   @override
-  Future<bool> setToken(String token) async {
-    if (token.isEmpty) return false;
-    try {
-      final success = await _instance.setString(AppPrefKeys.token, token);
-      if (success) {
-        await Future.wait([
-          setLoginStatus(true),
-          setLastLoginTime(DateTime.now()),
-          setSessionStartTime(DateTime.now()),
-        ]);
-      }
-      return success;
-    } catch (e) {
-      return false;
-    }
+  Future<bool> setToken(String token, {String? defaultValue}) async {
+    final val = token.isNotEmpty ? token : (defaultValue ?? '');
+    return _setEncrypted(AppPrefKeys.token, val);
   }
 
   @override
-  String getToken() {
-    return _getStringSafe(AppPrefKeys.token, '');
+  String getToken() => _getDecrypted(AppPrefKeys.token, '');
+
+  @override
+  Future<bool> setUserId(String userId, {String? defaultValue}) async {
+    final val = userId.isNotEmpty ? userId : (defaultValue ?? '');
+    return _setEncrypted(AppPrefKeys.userId, val);
   }
 
   @override
-  bool hasToken() {
-    return getToken().isNotEmpty;
+  String getUserId() => _getDecrypted(AppPrefKeys.userId, '');
+
+  @override
+  Future<bool> setLoginStatus(bool isLoggedIn, {bool? defaultValue}) async {
+    return _instance.setBool(AppPrefKeys.loginStatus, isLoggedIn);
   }
 
   @override
-  Future<bool> setRefreshToken(String refreshToken) async {
-    if (refreshToken.isEmpty) return false;
-    try {
-      return await _instance.setString(AppPrefKeys.refreshToken, refreshToken);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  String getRefreshToken() {
-    return _getStringSafe(AppPrefKeys.refreshToken, '');
-  }
-
-  @override
-  Future<bool> setUserId(String userId) async {
-    if (userId.isEmpty) return false;
-    try {
-      return await _instance.setString(AppPrefKeys.userId, userId);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  String getUserId() {
-    return _getStringSafe(AppPrefKeys.userId, '');
-  }
-
-  @override
-  Future<bool> setLoginStatus(bool isLoggedIn) async {
-    try {
-      return await _instance.setBool(AppPrefKeys.loginStatus, isLoggedIn);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  bool getLoginStatus() {
-    return _getBoolSafe(AppPrefKeys.loginStatus, false);
-  }
-
-  @override
-  Future<bool> setLastLoginTime(DateTime dateTime) async {
-    try {
-      return await _instance.setString(
-        AppPrefKeys.lastLoginTime,
-        dateTime.toIso8601String(),
-      );
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  DateTime? getLastLoginTime() {
-    final timeString = _instance.getString(AppPrefKeys.lastLoginTime);
-    return _parseDateTime(timeString);
-  }
-
-  @override
-  Future<bool> setSessionStartTime(DateTime dateTime) async {
-    try {
-      return await _instance.setString(
-        AppPrefKeys.sessionStartTime,
-        dateTime.toIso8601String(),
-      );
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  DateTime? getSessionStartTime() {
-    final timeString = _instance.getString(AppPrefKeys.sessionStartTime);
-    return _parseDateTime(timeString);
-  }
-
-  @override
-  int getSessionDuration() {
-    final sessionStart = getSessionStartTime();
-    if (sessionStart == null) return 0;
-    try {
-      return DateTime.now().difference(sessionStart).inSeconds;
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  @override
-  bool isAuthenticated() {
-    return hasToken() && getLoginStatus();
-  }
-
-  @override
-  bool isSessionValid({int timeoutMinutes = 43200}) {
-    if (!isAuthenticated()) return false;
-    final sessionStart = getSessionStartTime();
-    if (sessionStart == null) return false;
-    try {
-      final duration = DateTime.now().difference(sessionStart);
-      return duration.inMinutes < timeoutMinutes;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  Future<void> clearAuth() async {
-    try {
-      await Future.wait([
-        _instance.remove(AppPrefKeys.token),
-        _instance.remove(AppPrefKeys.refreshToken),
-        _instance.remove(AppPrefKeys.userId),
-        _instance.remove(AppPrefKeys.loginStatus),
-        _instance.remove(AppPrefKeys.lastLoginTime),
-        _instance.remove(AppPrefKeys.sessionStartTime),
-      ]);
-    } catch (e) {
-      // Silently fail - already cleared or error occurred
-    }
-  }
-
-  @override
-  Future<void> logout() async {
-    try {
-      await Future.wait([
-        setLoginStatus(false),
-        _instance.remove(AppPrefKeys.token),
-        _instance.remove(AppPrefKeys.refreshToken),
-        _instance.remove(AppPrefKeys.sessionStartTime),
-      ]);
-    } catch (e) {
-      // Silently fail - attempt to clear what we can
-      await setLoginStatus(false);
-    }
-  }
+  bool getLoginStatus() => _instance.getBool(AppPrefKeys.loginStatus) ?? false;
 
   // ==================== Theme ====================
 
   @override
-  Future<bool> setThemeMode(String themeMode) async {
-    if (!['light', 'dark', 'system'].contains(themeMode)) {
-      return false;
-    }
-    try {
-      return await _instance.setString(AppPrefKeys.themeMode, themeMode);
-    } catch (e) {
-      return false;
-    }
+  Future<bool> setThemeMode(String themeMode, {String? defaultValue}) async {
+    final val = themeMode.isNotEmpty ? themeMode : (defaultValue ?? 'dark');
+    return _setEncrypted(AppPrefKeys.themeMode, val);
   }
 
   @override
-  String getThemeMode() {
-    return _getStringSafe(AppPrefKeys.themeMode, 'system');
-  }
+  String getThemeMode() => _getDecrypted(AppPrefKeys.themeMode, 'dark');
 
   // ==================== Localization ====================
 
   @override
-  Future<bool> setLocale(String localeCode) async {
-    if (localeCode.isEmpty) return false;
-    try {
-      return await _instance.setString(AppPrefKeys.locale, localeCode);
-    } catch (e) {
-      return false;
-    }
+  Future<bool> setLocale(String localeCode, {String? defaultValue}) async {
+    final val = localeCode.isNotEmpty ? localeCode : (defaultValue ?? 'en');
+    return _setEncrypted(AppPrefKeys.locale, val);
   }
 
   @override
-  String getLocale() {
-    return _getStringSafe(AppPrefKeys.locale, 'en');
-  }
+  String getLocale() => _getDecrypted(AppPrefKeys.locale, 'en');
 
   // ==================== Onboarding ====================
 
   @override
-  Future<bool> setOnboardingCompleted(bool completed) async {
-    try {
-      return await _instance.setBool(
-        AppPrefKeys.onboardingCompleted,
-        completed,
-      );
-    } catch (e) {
-      return false;
-    }
+  Future<bool> setOnboardingCompleted(bool completed, {bool? defaultValue}) async {
+    return _instance.setBool(AppPrefKeys.onboardingCompleted, completed);
   }
 
   @override
-  bool isOnboardingCompleted() {
-    return _getBoolSafe(AppPrefKeys.onboardingCompleted, false);
-  }
+  bool isOnboardingCompleted() =>
+      _instance.getBool(AppPrefKeys.onboardingCompleted) ?? false;
 
-  // ==================== Generic Methods ====================
+  // ==================== Generic ====================
 
   @override
-  Future<bool> setString(String key, String value) async {
-    try {
-      return await _instance.setString(key, value);
-    } catch (e) {
-      return false;
-    }
+  Future<bool> setString(String key, String value, {String? defaultValue}) async {
+    final val = value.isNotEmpty ? value : (defaultValue ?? '');
+    return _setEncrypted(key, val);
   }
 
   @override
   String? getString(String key) {
+    final value = _instance.getString(key);
+    if (value == null) return null;
+    return _encryptionService.decrypt(value);
+  }
+
+  @override
+  Future<bool> setInt(String key, int value, {int? defaultValue}) async {
+    return _instance.setInt(key, value);
+  }
+
+  @override
+  int? getInt(String key) => _instance.getInt(key);
+
+  @override
+  Future<bool> setDouble(String key, double value, {double? defaultValue}) async {
+    return _instance.setDouble(key, value);
+  }
+
+  @override
+  double? getDouble(String key) => _instance.getDouble(key);
+
+  @override
+  Future<bool> setBool(String key, bool value, {bool? defaultValue}) async {
+    return _instance.setBool(key, value);
+  }
+
+  @override
+  bool? getBool(String key) => _instance.getBool(key);
+
+  @override
+  Future<bool> setStringList(String key, List<String> value,
+      {List<String>? defaultValue}) async {
     try {
-      return _instance.getString(key);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  @override
-  String getStringOrDefault(String key, String defaultValue) {
-    return _getStringSafe(key, defaultValue);
-  }
-
-  @override
-  Future<bool> setInt(String key, int value) async {
-    try {
-      return await _instance.setInt(key, value);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  int? getInt(String key) {
-    try {
-      return _instance.getInt(key);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  @override
-  int getIntOrDefault(String key, int defaultValue) {
-    return _getIntSafe(key, defaultValue);
-  }
-
-  @override
-  Future<bool> setDouble(String key, double value) async {
-    try {
-      return await _instance.setDouble(key, value);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  double? getDouble(String key) {
-    try {
-      return _instance.getDouble(key);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  @override
-  double getDoubleOrDefault(String key, double defaultValue) {
-    try {
-      return _instance.getDouble(key) ?? defaultValue;
-    } catch (e) {
-      return defaultValue;
-    }
-  }
-
-  @override
-  Future<bool> setBool(String key, bool value) async {
-    try {
-      return await _instance.setBool(key, value);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  bool? getBool(String key) {
-    try {
-      return _instance.getBool(key);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  @override
-  bool getBoolOrDefault(String key, bool defaultValue) {
-    return _getBoolSafe(key, defaultValue);
-  }
-
-  @override
-  Future<bool> setStringList(String key, List<String> value) async {
-    try {
-      return await _instance.setStringList(key, value);
-    } catch (e) {
+      final list = value.isNotEmpty ? value : (defaultValue ?? []);
+      final encryptedList = list.map((e) => _encryptionService.encrypt(e)).toList();
+      return await _instance.setStringList(key, encryptedList);
+    } catch (_) {
       return false;
     }
   }
 
   @override
   List<String>? getStringList(String key) {
-    try {
-      return _instance.getStringList(key);
-    } catch (e) {
-      return null;
-    }
+    final list = _instance.getStringList(key);
+    if (list == null) return null;
+    return list.map((e) => _encryptionService.decrypt(e)).toList();
   }
+
+  // ==================== Utility ====================
 
   @override
-  List<String> getStringListOrDefault(String key, List<String> defaultValue) {
-    try {
-      return _instance.getStringList(key) ?? defaultValue;
-    } catch (e) {
-      return defaultValue;
-    }
-  }
-
-  // ==================== Utility Methods ====================
+  Future<bool> remove(String key) async => _instance.remove(key);
 
   @override
-  Future<bool> remove(String key) async {
-    try {
-      return await _instance.remove(key);
-    } catch (e) {
-      return false;
-    }
-  }
+  Future<bool> clear() async => _instance.clear();
 
-  @override
-  Future<bool> clear() async {
-    try {
-      return await _instance.clear();
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  bool containsKey(String key) {
-    try {
-      return _instance.containsKey(key);
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  Set<String> getKeys() {
-    try {
-      return _instance.getKeys();
-    } catch (e) {
-      return <String>{};
-    }
-  }
-
-  // ==================== Encryption Management ====================
-
-  /// Enable or disable encryption (not supported in AppPrefImpl)
-  @override
-  Future<bool> setEncryptionEnabled(bool enabled) async {
-    // Encryption not supported in non-encrypted implementation
-    return false;
-  }
-
-  /// Check if encryption is enabled (not supported in AppPrefImpl)
-  @override
-  bool isEncryptionEnabled() {
-    return false;
-  }
-
-  /// Set encryption key (not supported in AppPrefImpl)
-  @override
-  Future<bool> setEncryptionKey(String key) async {
-    return false;
-  }
-
-  /// Set encryption IV (not supported in AppPrefImpl)
-  @override
-  Future<bool> setEncryptionIV(String iv) async {
-    return false;
-  }
-
-  /// Initialize encryption (not supported in AppPrefImpl)
-  @override
-  Future<bool> initializeEncryption({
-    required String key,
-    required String iv,
-    bool enable = true,
-  }) async {
-    return false;
-  }
 }

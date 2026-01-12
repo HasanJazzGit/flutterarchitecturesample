@@ -12,11 +12,34 @@ import java.io.InputStreamReader
 class MainActivity : FlutterActivity() {
     companion object {
         private const val CHANNEL = "security_channel"
-    }
 
+
+
+    }
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
+        
+        // Secret key channel
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.fluttersampleachitecture/security")
+            .setMethodCallHandler { call, result ->
+                android.util.Log.d("Security", "Method called: ${call.method}")
+                when (call.method) {
+                    "getSecretKey" -> {
+                        try {
+                            val key = SecurityUtils.getSecretKey()
+                            android.util.Log.d("Security", "Secret key retrieved: ${key.take(5)}...")
+                            result.success(key)
+                        } catch (e: Exception) {
+                            android.util.Log.e("Security", "Error getting secret key: ${e.message}")
+                            result.error("ERROR", "Failed to get secret key: ${e.message}", null)
+                        }
+                    }
+                    else -> {
+                        android.util.Log.w("Security", "Unknown method: ${call.method}")
+                        result.notImplemented()
+                    }
+                }
+            }
         // Security channel for iOS-style checks
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,

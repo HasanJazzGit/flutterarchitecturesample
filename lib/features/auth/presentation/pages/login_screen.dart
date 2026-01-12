@@ -1,16 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttersampleachitecture/core/flavor/app_config.dart';
 import 'package:fluttersampleachitecture/core/preference/app_pref.dart';
 import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/security/native_security.dart';
+import '../../../../core/storage/encryption_service.dart';
 import '../../../../core/widgets/app_logo_widget.dart';
 import '../../../../core/widgets/widgets_export.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../../../../core/enums/state_status.dart';
 import '../widgets/remember_me_forgot_password_row_widget.dart';
-import '../widgets/sign_up_row_widget.dart';
 import '../widgets/welcome_back_widget.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -35,8 +38,29 @@ class _LoginScreenState extends State<LoginScreen> {
     loginDataFeeder();
    var aa= sl<AppPref>().getString("Test");
    print(aa.toString());
-  }
+   getKey();
 
+  }
+  var secretKey ="null";
+  void getKey  ()
+  async {
+    secretKey =await NativeSecurity.getSecretKey();
+    var encryptionService = sl<EncryptionService>();
+    var appPref = sl<AppPref>();
+
+    // appPref.setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+    //appPref.setToken("hasan bhai flutter ");
+     var res=appPref.getToken();
+     log(res);
+
+    setState(() {
+      log("secretKey",name: "val=$secretKey");
+      secretKey;
+    });
+    print(secretKey);
+
+
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -64,6 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+
+                  Text(secretKey.toString()),
+                    Text(AppConfig.currentFlavor.toString()),
+                    Text(AppConfig.getBaseUrl()),
+                    Text(AppConfig.appName),
                     // App Logo/Icon
                     AppLogoWidget(),
                     SizedBox(height: AppSizes.spacingXXXL),
@@ -95,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       selector: (state) => state.loginStatus,
                       builder: (context, loginStatus) {
                         return AppButton(
-                          text: AppStrings.signIn,
+                          text: "Sign In",
                           onPressed: () => _handleLogin(context),
                           isLoading: loginStatus == StateStatus.loading,
                           icon: Icons.arrow_forward_rounded,
@@ -103,8 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                     SizedBox(height: AppSizes.spacingXXL),
-                    // Sign Up Link
-                    SignUpRowWidget(colorScheme: colorScheme),
                   ],
                 ),
               ),
@@ -141,3 +168,4 @@ class _LoginScreenState extends State<LoginScreen> {
   _passwordController.text="Test@1122";
   }
 }
+

@@ -28,6 +28,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(state.copyWith(loginStatus: StateStatus.loading));
 
+
     final params = LoginParams(email: email, password: password);
     final result = await loginUseCase.call(params);
 
@@ -44,9 +45,7 @@ class AuthCubit extends Cubit<AuthState> {
         final appPref = sl<AppPref>();
         await appPref.setToken(response.token);
         await appPref.setUserId(response.userId);
-        if (response.refreshToken != null) {
-          await appPref.setRefreshToken(response.refreshToken!);
-        }
+
 
         // Best Practice: Update API client with new token
         sl<ApiClient>().setAuthToken(response.token);
@@ -69,7 +68,6 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       // Clear authentication data from shared preferences
       final appPref = sl<AppPref>();
-      await appPref.logout();
 
       // Remove auth token from API client
       sl<ApiClient>().removeAuthToken();

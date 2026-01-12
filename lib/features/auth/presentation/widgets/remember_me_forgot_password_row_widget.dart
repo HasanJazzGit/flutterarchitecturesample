@@ -38,7 +38,7 @@ class RememberMeForgotPasswordRowWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  AppStrings.rememberMe,
+                  "Remember Me",
                   style: TextStyle(
                     fontSize: AppSizes.textSizeM,
                     color: colorScheme.onSurface,
@@ -50,13 +50,13 @@ class RememberMeForgotPasswordRowWidget extends StatelessWidget {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(AppStrings.forgotPassword),
+                    content: Text("Forgot Password"),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               },
               child: Text(
-                AppStrings.forgotPassword,
+                "Forgot Password",
                 style: TextStyle(
                   fontSize: AppSizes.textSizeM,
                   color: colorScheme.primary,

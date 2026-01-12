@@ -3,6 +3,416 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
+class $AppTableTable extends AppTable
+    with TableInfo<$AppTableTable, AppTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _intValueMeta = const VerificationMeta(
+    'intValue',
+  );
+  @override
+  late final GeneratedColumn<int> intValue = GeneratedColumn<int>(
+    'int_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _realValueMeta = const VerificationMeta(
+    'realValue',
+  );
+  @override
+  late final GeneratedColumn<double> realValue = GeneratedColumn<double>(
+    'real_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _textValueMeta = const VerificationMeta(
+    'textValue',
+  );
+  @override
+  late final GeneratedColumn<String> textValue = GeneratedColumn<String>(
+    'text_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _boolValueMeta = const VerificationMeta(
+    'boolValue',
+  );
+  @override
+  late final GeneratedColumn<bool> boolValue = GeneratedColumn<bool>(
+    'bool_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("bool_value" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _dateValueMeta = const VerificationMeta(
+    'dateValue',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dateValue = GeneratedColumn<DateTime>(
+    'date_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _blobValueMeta = const VerificationMeta(
+    'blobValue',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> blobValue = GeneratedColumn<Uint8List>(
+    'blob_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    intValue,
+    realValue,
+    textValue,
+    boolValue,
+    dateValue,
+    blobValue,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'app_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AppTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('int_value')) {
+      context.handle(
+        _intValueMeta,
+        intValue.isAcceptableOrUnknown(data['int_value']!, _intValueMeta),
+      );
+    }
+    if (data.containsKey('real_value')) {
+      context.handle(
+        _realValueMeta,
+        realValue.isAcceptableOrUnknown(data['real_value']!, _realValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_realValueMeta);
+    }
+    if (data.containsKey('text_value')) {
+      context.handle(
+        _textValueMeta,
+        textValue.isAcceptableOrUnknown(data['text_value']!, _textValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_textValueMeta);
+    }
+    if (data.containsKey('bool_value')) {
+      context.handle(
+        _boolValueMeta,
+        boolValue.isAcceptableOrUnknown(data['bool_value']!, _boolValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_boolValueMeta);
+    }
+    if (data.containsKey('date_value')) {
+      context.handle(
+        _dateValueMeta,
+        dateValue.isAcceptableOrUnknown(data['date_value']!, _dateValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateValueMeta);
+    }
+    if (data.containsKey('blob_value')) {
+      context.handle(
+        _blobValueMeta,
+        blobValue.isAcceptableOrUnknown(data['blob_value']!, _blobValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_blobValueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {intValue};
+  @override
+  AppTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppTableData(
+      intValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}int_value'],
+      )!,
+      realValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}real_value'],
+      )!,
+      textValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}text_value'],
+      )!,
+      boolValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}bool_value'],
+      )!,
+      dateValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date_value'],
+      )!,
+      blobValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}blob_value'],
+      )!,
+    );
+  }
+
+  @override
+  $AppTableTable createAlias(String alias) {
+    return $AppTableTable(attachedDatabase, alias);
+  }
+}
+
+class AppTableData extends DataClass implements Insertable<AppTableData> {
+  final int intValue;
+  final double realValue;
+  final String textValue;
+  final bool boolValue;
+  final DateTime dateValue;
+  final Uint8List blobValue;
+  const AppTableData({
+    required this.intValue,
+    required this.realValue,
+    required this.textValue,
+    required this.boolValue,
+    required this.dateValue,
+    required this.blobValue,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['int_value'] = Variable<int>(intValue);
+    map['real_value'] = Variable<double>(realValue);
+    map['text_value'] = Variable<String>(textValue);
+    map['bool_value'] = Variable<bool>(boolValue);
+    map['date_value'] = Variable<DateTime>(dateValue);
+    map['blob_value'] = Variable<Uint8List>(blobValue);
+    return map;
+  }
+
+  AppTableCompanion toCompanion(bool nullToAbsent) {
+    return AppTableCompanion(
+      intValue: Value(intValue),
+      realValue: Value(realValue),
+      textValue: Value(textValue),
+      boolValue: Value(boolValue),
+      dateValue: Value(dateValue),
+      blobValue: Value(blobValue),
+    );
+  }
+
+  factory AppTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppTableData(
+      intValue: serializer.fromJson<int>(json['intValue']),
+      realValue: serializer.fromJson<double>(json['realValue']),
+      textValue: serializer.fromJson<String>(json['textValue']),
+      boolValue: serializer.fromJson<bool>(json['boolValue']),
+      dateValue: serializer.fromJson<DateTime>(json['dateValue']),
+      blobValue: serializer.fromJson<Uint8List>(json['blobValue']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'intValue': serializer.toJson<int>(intValue),
+      'realValue': serializer.toJson<double>(realValue),
+      'textValue': serializer.toJson<String>(textValue),
+      'boolValue': serializer.toJson<bool>(boolValue),
+      'dateValue': serializer.toJson<DateTime>(dateValue),
+      'blobValue': serializer.toJson<Uint8List>(blobValue),
+    };
+  }
+
+  AppTableData copyWith({
+    int? intValue,
+    double? realValue,
+    String? textValue,
+    bool? boolValue,
+    DateTime? dateValue,
+    Uint8List? blobValue,
+  }) => AppTableData(
+    intValue: intValue ?? this.intValue,
+    realValue: realValue ?? this.realValue,
+    textValue: textValue ?? this.textValue,
+    boolValue: boolValue ?? this.boolValue,
+    dateValue: dateValue ?? this.dateValue,
+    blobValue: blobValue ?? this.blobValue,
+  );
+  AppTableData copyWithCompanion(AppTableCompanion data) {
+    return AppTableData(
+      intValue: data.intValue.present ? data.intValue.value : this.intValue,
+      realValue: data.realValue.present ? data.realValue.value : this.realValue,
+      textValue: data.textValue.present ? data.textValue.value : this.textValue,
+      boolValue: data.boolValue.present ? data.boolValue.value : this.boolValue,
+      dateValue: data.dateValue.present ? data.dateValue.value : this.dateValue,
+      blobValue: data.blobValue.present ? data.blobValue.value : this.blobValue,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppTableData(')
+          ..write('intValue: $intValue, ')
+          ..write('realValue: $realValue, ')
+          ..write('textValue: $textValue, ')
+          ..write('boolValue: $boolValue, ')
+          ..write('dateValue: $dateValue, ')
+          ..write('blobValue: $blobValue')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    intValue,
+    realValue,
+    textValue,
+    boolValue,
+    dateValue,
+    $driftBlobEquality.hash(blobValue),
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppTableData &&
+          other.intValue == this.intValue &&
+          other.realValue == this.realValue &&
+          other.textValue == this.textValue &&
+          other.boolValue == this.boolValue &&
+          other.dateValue == this.dateValue &&
+          $driftBlobEquality.equals(other.blobValue, this.blobValue));
+}
+
+class AppTableCompanion extends UpdateCompanion<AppTableData> {
+  final Value<int> intValue;
+  final Value<double> realValue;
+  final Value<String> textValue;
+  final Value<bool> boolValue;
+  final Value<DateTime> dateValue;
+  final Value<Uint8List> blobValue;
+  const AppTableCompanion({
+    this.intValue = const Value.absent(),
+    this.realValue = const Value.absent(),
+    this.textValue = const Value.absent(),
+    this.boolValue = const Value.absent(),
+    this.dateValue = const Value.absent(),
+    this.blobValue = const Value.absent(),
+  });
+  AppTableCompanion.insert({
+    this.intValue = const Value.absent(),
+    required double realValue,
+    required String textValue,
+    required bool boolValue,
+    required DateTime dateValue,
+    required Uint8List blobValue,
+  }) : realValue = Value(realValue),
+       textValue = Value(textValue),
+       boolValue = Value(boolValue),
+       dateValue = Value(dateValue),
+       blobValue = Value(blobValue);
+  static Insertable<AppTableData> custom({
+    Expression<int>? intValue,
+    Expression<double>? realValue,
+    Expression<String>? textValue,
+    Expression<bool>? boolValue,
+    Expression<DateTime>? dateValue,
+    Expression<Uint8List>? blobValue,
+  }) {
+    return RawValuesInsertable({
+      if (intValue != null) 'int_value': intValue,
+      if (realValue != null) 'real_value': realValue,
+      if (textValue != null) 'text_value': textValue,
+      if (boolValue != null) 'bool_value': boolValue,
+      if (dateValue != null) 'date_value': dateValue,
+      if (blobValue != null) 'blob_value': blobValue,
+    });
+  }
+
+  AppTableCompanion copyWith({
+    Value<int>? intValue,
+    Value<double>? realValue,
+    Value<String>? textValue,
+    Value<bool>? boolValue,
+    Value<DateTime>? dateValue,
+    Value<Uint8List>? blobValue,
+  }) {
+    return AppTableCompanion(
+      intValue: intValue ?? this.intValue,
+      realValue: realValue ?? this.realValue,
+      textValue: textValue ?? this.textValue,
+      boolValue: boolValue ?? this.boolValue,
+      dateValue: dateValue ?? this.dateValue,
+      blobValue: blobValue ?? this.blobValue,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (intValue.present) {
+      map['int_value'] = Variable<int>(intValue.value);
+    }
+    if (realValue.present) {
+      map['real_value'] = Variable<double>(realValue.value);
+    }
+    if (textValue.present) {
+      map['text_value'] = Variable<String>(textValue.value);
+    }
+    if (boolValue.present) {
+      map['bool_value'] = Variable<bool>(boolValue.value);
+    }
+    if (dateValue.present) {
+      map['date_value'] = Variable<DateTime>(dateValue.value);
+    }
+    if (blobValue.present) {
+      map['blob_value'] = Variable<Uint8List>(blobValue.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppTableCompanion(')
+          ..write('intValue: $intValue, ')
+          ..write('realValue: $realValue, ')
+          ..write('textValue: $textValue, ')
+          ..write('boolValue: $boolValue, ')
+          ..write('dateValue: $dateValue, ')
+          ..write('blobValue: $blobValue')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -788,14 +1198,229 @@ class ProductsCompanion extends UpdateCompanion<Product> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $AppTableTable appTable = $AppTableTable(this);
   late final $ProductsTable products = $ProductsTable(this);
+  late final AppDao appDao = AppDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [products];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [appTable, products];
 }
 
+typedef $$AppTableTableCreateCompanionBuilder =
+    AppTableCompanion Function({
+      Value<int> intValue,
+      required double realValue,
+      required String textValue,
+      required bool boolValue,
+      required DateTime dateValue,
+      required Uint8List blobValue,
+    });
+typedef $$AppTableTableUpdateCompanionBuilder =
+    AppTableCompanion Function({
+      Value<int> intValue,
+      Value<double> realValue,
+      Value<String> textValue,
+      Value<bool> boolValue,
+      Value<DateTime> dateValue,
+      Value<Uint8List> blobValue,
+    });
+
+class $$AppTableTableFilterComposer
+    extends Composer<_$AppDatabase, $AppTableTable> {
+  $$AppTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get intValue => $composableBuilder(
+    column: $table.intValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get realValue => $composableBuilder(
+    column: $table.realValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get textValue => $composableBuilder(
+    column: $table.textValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get boolValue => $composableBuilder(
+    column: $table.boolValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dateValue => $composableBuilder(
+    column: $table.dateValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get blobValue => $composableBuilder(
+    column: $table.blobValue,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $AppTableTable> {
+  $$AppTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get intValue => $composableBuilder(
+    column: $table.intValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get realValue => $composableBuilder(
+    column: $table.realValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get textValue => $composableBuilder(
+    column: $table.textValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get boolValue => $composableBuilder(
+    column: $table.boolValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get dateValue => $composableBuilder(
+    column: $table.dateValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get blobValue => $composableBuilder(
+    column: $table.blobValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AppTableTable> {
+  $$AppTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get intValue =>
+      $composableBuilder(column: $table.intValue, builder: (column) => column);
+
+  GeneratedColumn<double> get realValue =>
+      $composableBuilder(column: $table.realValue, builder: (column) => column);
+
+  GeneratedColumn<String> get textValue =>
+      $composableBuilder(column: $table.textValue, builder: (column) => column);
+
+  GeneratedColumn<bool> get boolValue =>
+      $composableBuilder(column: $table.boolValue, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dateValue =>
+      $composableBuilder(column: $table.dateValue, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get blobValue =>
+      $composableBuilder(column: $table.blobValue, builder: (column) => column);
+}
+
+class $$AppTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppTableTable,
+          AppTableData,
+          $$AppTableTableFilterComposer,
+          $$AppTableTableOrderingComposer,
+          $$AppTableTableAnnotationComposer,
+          $$AppTableTableCreateCompanionBuilder,
+          $$AppTableTableUpdateCompanionBuilder,
+          (
+            AppTableData,
+            BaseReferences<_$AppDatabase, $AppTableTable, AppTableData>,
+          ),
+          AppTableData,
+          PrefetchHooks Function()
+        > {
+  $$AppTableTableTableManager(_$AppDatabase db, $AppTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> intValue = const Value.absent(),
+                Value<double> realValue = const Value.absent(),
+                Value<String> textValue = const Value.absent(),
+                Value<bool> boolValue = const Value.absent(),
+                Value<DateTime> dateValue = const Value.absent(),
+                Value<Uint8List> blobValue = const Value.absent(),
+              }) => AppTableCompanion(
+                intValue: intValue,
+                realValue: realValue,
+                textValue: textValue,
+                boolValue: boolValue,
+                dateValue: dateValue,
+                blobValue: blobValue,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> intValue = const Value.absent(),
+                required double realValue,
+                required String textValue,
+                required bool boolValue,
+                required DateTime dateValue,
+                required Uint8List blobValue,
+              }) => AppTableCompanion.insert(
+                intValue: intValue,
+                realValue: realValue,
+                textValue: textValue,
+                boolValue: boolValue,
+                dateValue: dateValue,
+                blobValue: blobValue,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppTableTable,
+      AppTableData,
+      $$AppTableTableFilterComposer,
+      $$AppTableTableOrderingComposer,
+      $$AppTableTableAnnotationComposer,
+      $$AppTableTableCreateCompanionBuilder,
+      $$AppTableTableUpdateCompanionBuilder,
+      (
+        AppTableData,
+        BaseReferences<_$AppDatabase, $AppTableTable, AppTableData>,
+      ),
+      AppTableData,
+      PrefetchHooks Function()
+    >;
 typedef $$ProductsTableCreateCompanionBuilder =
     ProductsCompanion Function({
       Value<int> id,
@@ -1163,6 +1788,8 @@ typedef $$ProductsTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $$AppTableTableTableManager get appTable =>
+      $$AppTableTableTableManager(_db, _db.appTable);
   $$ProductsTableTableManager get products =>
       $$ProductsTableTableManager(_db, _db.products);
 }

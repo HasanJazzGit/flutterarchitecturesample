@@ -46,7 +46,6 @@ class _SplashPageState extends State<SplashPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("API_URL="+String.fromEnvironment('API_URL')),
               // App Logo or Icon
               Icon(Icons.flutter_dash, size: 100, color: Colors.white),
               const SizedBox(height: 24),

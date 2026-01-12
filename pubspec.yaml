@@ -57,7 +57,10 @@ dependencies:
   shared_preferences: ^2.2.2
   
   # Encryption for secure storage
-  encrypt: ^5.0.3
+  crypto: any
+  
+  # Secure storage (KeyStore/Keychain) for encryption keys
+  flutter_secure_storage: ^9.0.0
   
   # Dependency injection
   get_it: ^7.6.4
@@ -80,6 +83,8 @@ dependencies:
   cached_network_image: ^3.4.1
 
   flutter_svg: ^2.2.3
+
+
 
 dev_dependencies:
   flutter_test:

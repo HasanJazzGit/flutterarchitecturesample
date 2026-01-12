@@ -38,22 +38,6 @@ class FlavorSetupHelper {
       FlavorHelper.log('===========================');
     }
   }
-
-  /// Check if feature should be enabled based on flavor
-  static bool shouldEnableFeature(String featureName) {
-    switch (AppConfig.currentFlavor) {
-      case AppFlavor.development:
-        // Enable all features in development
-        return true;
-      case AppFlavor.staging:
-        // Enable most features in staging, except experimental ones
-        return featureName != 'experimental';
-      case AppFlavor.production:
-        // Only enable stable features in production
-        return featureName == 'stable';
-    }
-  }
-
   /// Get environment-specific error reporting configuration
   static Map<String, dynamic> getErrorReportingConfig() {
     return {

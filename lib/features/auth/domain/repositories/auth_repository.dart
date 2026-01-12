@@ -9,9 +9,4 @@ abstract class AuthRepository {
     required LoginParams params,
   });
 
-  /// Logout user
-  Future<Either<ErrorMsg, void>> logout();
-
-  /// Check if user is authenticated
-  Future<Either<ErrorMsg, bool>> isAuthenticated();
 }

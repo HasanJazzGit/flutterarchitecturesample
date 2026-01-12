@@ -596,7 +596,7 @@ class AppPrefImpl implements AppPref {
 
 **How to Add Colors:**
 ```dart
-// theme/app__theme_colors.dart
+// theme/app_theme_colors.dart
 class AppColors extends ThemeExtension<AppColors> {
   // ... existing colors
   

@@ -11,5 +11,6 @@ class AuthState with _$AuthState {
     @Default(StateStatus.idle) StateStatus verifyOtpState,
     LoginEntity? loginEntity,
     @Default(false) bool rememberMe,
+
   }) = _AuthState;
 }

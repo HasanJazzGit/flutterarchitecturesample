@@ -10,5 +10,6 @@ enum StateStatus {
   deleting,     // While deleting an item
   noInternet,   // Network connection issue
   unauthorized, // Token expired or user not logged in
-  paginating,   // Loading next page for infinite scroll
+  paginating,
+
 }

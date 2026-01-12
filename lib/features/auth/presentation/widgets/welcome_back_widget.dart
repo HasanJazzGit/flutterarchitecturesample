@@ -16,7 +16,7 @@ class WelcomeBackWidget extends StatelessWidget {
     return Column(
       children: [
         Text(
-          AppStrings.welcomeBack,
+          "Welcome Back'",
           style: theme.textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: colorScheme.onBackground,
@@ -26,7 +26,7 @@ class WelcomeBackWidget extends StatelessWidget {
         ),
         SizedBox(height: AppSizes.spacingS),
         Text(
-          AppStrings.signIn,
+          "Sign In",
           style: theme.textTheme.bodyLarge?.copyWith(
             color: colorScheme.onBackground.withOpacity(0.7),
             fontSize: AppSizes.textSizeL,
