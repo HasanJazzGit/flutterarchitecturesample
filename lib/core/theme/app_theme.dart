@@ -9,6 +9,7 @@ class AppTheme {
         seedColor: AppThemeColors.light.primary,
         brightness: Brightness.light,
       ),
+
       extensions: <ThemeExtension<dynamic>>[
         AppThemeColors.light,
       ],

@@ -15,7 +15,7 @@ import UIKit
     }
     
     let channel = FlutterMethodChannel(
-      name: "com.example.fluttersampleachitecture/security",
+      name: "native/keys",
       binaryMessenger: controller.binaryMessenger
     )
     
